@@ -81,14 +81,10 @@
   .tour-step{font-size:.78rem;color:#9aa0d6;margin-top:6px}
   .tour-arrow{stroke:url(#tourGrad);stroke-width:2.2}
   .tour-arrow-head{fill:#a78bfa}
-  
-  /* View-specific visibility */
-  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<!-- Launchers (manual start; no auto-start to avoid blocking interactions) -->
 <div class="tour-launch">
   <button id="tour-owner-btn">Owner tour</button>
   <button id="tour-viewer-btn">Viewer tour</button>
@@ -96,14 +92,12 @@
 
 <div class="max-w-6xl mx-auto px-5 pt-8 pb-16">
 
-  <!-- Header -->
   <div class="glass rounded-2xl p-4 md:p-5 mb-6 relative overflow-hidden">
     <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(1200px 200px at -10% 0%, rgba(167,139,250,.12), transparent 60%);"></div>
 
     <div class="flex flex-wrap items-center gap-3">
       <div class="text-2xl font-extrabold tracking-tight">Hello! <span class="text-violet-300">LinkUp</span> <span class="text-sm font-semibold text-violet-200/80 align-top">v7</span></div>
 
-      <!-- Scenario presets (demo-only) -->
       <div id="scenarioSelect" class="chip rounded-xl px-3 py-1.5 ml-2 flex items-center gap-2">
         <span class="text-sm">Scenario:</span>
         <select id="scenarioPicker" class="bg-transparent outline-none text-[.9rem]">
@@ -114,14 +108,12 @@
         </select>
       </div>
 
-      <!-- Availability -->
       <div id="availabilityToggle" class="ml-auto flex items-center gap-2">
         <span class="small">Owner availability:</span>
         <button data-state="available" class="chip pill px-3 py-1 sel" type="button">Available</button>
         <button data-state="away" class="chip pill px-3 py-1" type="button">Away</button>
       </div>
 
-      <!-- View toggle -->
       <div id="viewToggle" class="flex items-center gap-1 ml-3">
         <span class="small">View as:</span>
         <button id="btn-viewer" class="chip pill px-3 py-1" type="button">Viewer</button>
@@ -132,7 +124,6 @@
     <div id="scenarioHint" class="mt-3 small">Scenario: <span class="hint">Fresh new</span> • <span id="availLabel" class="hint">Owner available</span></div>
   </div>
 
-  <!-- People -->
   <div id="profilesRow" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
     <div class="glass rounded-2xl p-4 flex items-center gap-4">
       <img class="avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop" alt="Owner">
@@ -153,19 +144,16 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-    <!-- Left column -->
     <div class="space-y-6">
 
-      <!-- Viewer Request & 1-Liner -->
       <div id="viewerRequest" class="glass rounded-2xl p-4">
         <div class="card-title text-sm mb-2">Viewer Request &amp; 1-Liner</div>
         <div class="flex items-center gap-3 mb-2">
           <span id="actionPill" class="pill chip px-3 py-1 text-sm">Action selected: Schedule a Call</span>
         </div>
-        <div class="small opacity-90">"<span id="oneLiner">Travel app MVP — need fast UI polish + design tokens</span>"</div>
+        <div class="small opacity-90">“<span id="oneLiner">Travel app MVP — need fast UI polish + design tokens</span>”</div>
       </div>
 
-      <!-- Compatibility -->
       <div id="compatibilityCard" class="glass rounded-2xl p-4">
         <div class="flex items-start justify-between">
           <div>
@@ -189,10 +177,8 @@
 
     </div>
 
-    <!-- Right column -->
     <div class="space-y-6">
 
-      <!-- Next Step - Owner View -->
       <div id="nextStepCardOwner" class="glass rounded-2xl p-4">
         <div class="card-title text-sm mb-2">Next step</div>
         <div class="space-y-3">
@@ -202,20 +188,16 @@
         </div>
         <div class="small mt-3">Choose one action to keep this LinkUp fresh.</div>
       </div>
-
-      <!-- Next Step - Viewer View -->
+      
       <div id="nextStepCardViewer" class="glass rounded-2xl p-4 hidden">
-        <div class="card-title text-sm mb-2">Status</div>
-        <div id="viewerOwnerStatus" class="chip rounded-xl p-3">
-          <div class="small mb-1">Owner status: <span id="viewerStatusText">Available</span></div>
-          <div class="text-sm opacity-90" id="viewerStatusDesc">Your request is being reviewed. You'll hear back soon!</div>
-        </div>
+        <div class="card-title text-sm mb-2">What happens next</div>
+        <div class="small">Owner chooses an action. You’ll get the link or message here.</div>
+        <div id="viewerOwnerStatus" class="mt-3 font-bold"></div>
       </div>
 
     </div>
   </div>
 
-  <!-- Phases + Progress -->
   <div id="progressSection" class="glass rounded-2xl p-4 mt-6">
     <div class="phase-wrap">
       <div class="phase-label"><span class="dot active" id="dot-submitted"></span>Submitted</div>
@@ -233,7 +215,6 @@
     <div id="expiry" class="small mt-2">Expires in 6d 23h 43m</div>
   </div>
 
-  <!-- Footer -->
   <div id="footerActions" class="flex flex-wrap gap-3 mt-6">
     <button class="btn rounded-xl px-4 py-2" type="button">Download vCard</button>
     <button class="btn rounded-xl px-4 py-2" type="button">Add to Calendar</button>
@@ -243,7 +224,6 @@
 
 </div>
 
-<!-- Confirm modal -->
 <div id="confirmModal" class="fixed inset-0 hidden items-center justify-center z-40">
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="confirmBackdrop"></div>
   <div class="glass rounded-2xl p-5 w-[min(520px,92vw)] relative">
@@ -257,7 +237,6 @@
   </div>
 </div>
 
-<!-- Guided Tour Overlay -->
 <div id="tour-overlay" class="tour-overlay" aria-hidden="true">
   <div class="tour-dim" id="tour-dim"></div>
   <svg class="tour-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -289,105 +268,78 @@
 document.addEventListener('DOMContentLoaded', function(){
   // ---------- Helpers ----------
   const $ = (s, root=document) => root.querySelector(s);
+  const $$ = (s, root=document) => root.querySelectorAll(s);
   const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
   const rectAbs = (el)=>{ const r = el.getBoundingClientRect(); return {x:r.left+window.scrollX, y:r.top+window.scrollY, w:r.width, h:r.height}; };
 
   // ---------- State ----------
-  let CURRENT_VIEW = 'owner'; // 'owner' | 'viewer'
-  let AVAIL = 'available';    // 'available' | 'away'
-  let STEP = 1;               // 1..4 (Submitted, Viewed, Acted, Closed)
-  let SCORE = 78;             // 0..100
+  let state = {
+    view: 'owner',
+    availability: 'available',
+    step: 1,
+    score: 78
+  };
   let PENDING_ACTION = null;
 
   // ---------- UI Updaters ----------
-  function setView(v){
-    CURRENT_VIEW = v;
-    $('#btn-owner').classList.toggle('sel', v==='owner');
-    $('#btn-viewer').classList.toggle('sel', v==='viewer');
-    
-    // Update view-specific component visibility
-    if (v === 'owner') {
-      // Owner view: show owner controls, hide viewer status
-      $('#nextStepCardOwner').classList.remove('hidden');
-      $('#nextStepCardViewer').classList.add('hidden');
-      $('#compatScoreWrap').classList.remove('hidden');
-      $('#availabilityToggle').classList.remove('hidden');
-    } else {
-      // Viewer view: hide owner controls, show viewer status, hide score area only
-      $('#nextStepCardOwner').classList.add('hidden');
-      $('#nextStepCardViewer').classList.remove('hidden');
-      $('#compatScoreWrap').classList.add('hidden');
-      $('#availabilityToggle').classList.add('hidden');
-    }
-    
-    // Update viewer status display
-    updateViewerStatus();
-    $('#scenarioHint').querySelector('.hint').textContent = v==='owner' ? 'Owner console view' : 'Viewer experience';
-  }
-  function setAvail(a){
-    AVAIL = a;
-    document.querySelectorAll('#availabilityToggle .pill').forEach(b => b.classList.toggle('sel', b.dataset.state===a));
-    $('#availLabel').textContent = a==='away' ? 'Owner away' : 'Owner available';
-    $('#ownerBusyBadge').classList.toggle('hidden', a!=='away');
-    updateViewerStatus();
-  }
-  
-  function updateViewerStatus(){
-    const statusText = $('#viewerStatusText');
-    const statusDesc = $('#viewerStatusDesc');
-    const statusCard = $('#viewerOwnerStatus');
-    
-    if (statusText && statusDesc && statusCard) {
-      if (AVAIL === 'away') {
-        statusText.textContent = 'Away';
-        statusDesc.textContent = 'The owner is currently away. Please check back later.';
-        statusCard.style.background = 'rgba(239, 68, 68, 0.1)';
-        statusCard.style.borderColor = 'rgba(239, 68, 68, 0.2)';
-      } else {
-        statusText.textContent = 'Available';
-        statusDesc.textContent = 'Your request is being reviewed. You\'ll hear back soon!';
-        statusCard.style.background = 'rgba(34, 197, 94, 0.1)';
-        statusCard.style.borderColor = 'rgba(34, 197, 94, 0.2)';
-      }
-    }
-  }
-  function setScore(n){
-    SCORE = clamp(parseInt(n||0,10), 0, 100);
-    $('#scoreNum').textContent = SCORE;
-    $('#scoreFill').style.width = SCORE + '%';
-    $('#confText').textContent = SCORE >= 75 ? 'High' : SCORE >= 60 ? 'Medium' : 'Low';
-  }
-  function setStep(n){
-    STEP = clamp(parseInt(n||1,10), 1, 4);
-    $('#dot-submitted').classList.toggle('active', STEP >= 1);
-    $('#dot-viewed').classList.toggle('active',   STEP >= 2);
-    $('#dot-acted').classList.toggle('active',    STEP >= 3);
-    $('#dot-closed').classList.toggle('active',   STEP >= 4);
-    // Fill to the END of the completed phase: 1→25%, 2→50%, 3→75%, 4→100%
-    const pct = (STEP/4) * 100;
+  function updateUI(){
+    // View switching
+    $('#btn-owner').classList.toggle('sel', state.view === 'owner');
+    $('#btn-viewer').classList.toggle('sel', state.view === 'viewer');
+    $('#availabilityToggle').style.display = state.view === 'owner' ? 'flex' : 'none';
+    $('#nextStepCardOwner').style.display = state.view === 'owner' ? 'block' : 'none';
+    $('#nextStepCardViewer').style.display = state.view === 'viewer' ? 'block' : 'none';
+    $('#compatScoreWrap').style.display = state.view === 'owner' ? 'block' : 'none';
+
+    // Availability
+    $$('#availabilityToggle .pill').forEach(b => b.classList.toggle('sel', b.dataset.state === state.availability));
+    $('#ownerBusyBadge').classList.toggle('hidden', state.availability !== 'away');
+    const availText = state.availability === 'away' ? 'Owner away' : 'Owner available';
+    $('#availLabel').textContent = availText;
+    $('#viewerOwnerStatus').textContent = `Owner status: ${state.availability === 'away' ? 'Away' : 'Available'}`;
+    $('#viewerOwnerStatus').style.color = state.availability === 'away' ? '#F87171' : '#34D399';
+
+
+    // Score
+    $('#scoreNum').textContent = state.score;
+    $('#scoreFill').style.width = state.score + '%';
+    $('#confText').textContent = state.score >= 75 ? 'High' : state.score >= 60 ? 'Medium' : 'Low';
+
+    // Step/Progress
+    $('#dot-submitted').classList.toggle('active', state.step >= 1);
+    $('#dot-viewed').classList.toggle('active', state.step >= 2);
+    $('#dot-acted').classList.toggle('active', state.step >= 3);
+    $('#dot-closed').classList.toggle('active', state.step >= 4);
+    const pct = ((state.step -1) / 3) * 100;
     $('#phaseFill').style.width = pct + '%';
+    
+    // Scenario Hint
+    const scenarioLabel = $('#scenarioPicker').options[$('#scenarioPicker').selectedIndex].text.split('•')[1].trim();
+    $('#scenarioHint').innerHTML = `Scenario: <span class="hint">${scenarioLabel}</span> • <span class="hint">${availText}</span>`;
+  }
+
+  function setState(newState){
+    state = {...state, ...newState};
+    updateUI();
   }
 
   // ---------- Scenario presets (demo only) ----------
   function applyScenario(code){
     switch(code){
-      case 'D-away':       setAvail('away');      setStep(1); setScore(62); break;
-      case 'C-available':  setAvail('available'); setStep(1); setScore(78); break;
-      case 'B-followup':   setAvail('available'); setStep(2); setScore(55); break;
-      case 'A-accepted':   setAvail('available'); setStep(3); setScore(84); break;
+      case 'D-away':       setState({availability: 'away', step: 1, score: 62}); break;
+      case 'C-available':  setState({availability: 'available', step: 1, score: 78}); break;
+      case 'B-followup':   setState({availability: 'available', step: 2, score: 55}); break;
+      case 'A-accepted':   setState({availability: 'available', step: 3, score: 84}); break;
     }
-    const label = code.includes('away') ? 'Owner away' : 'Owner available';
-    $('#scenarioHint').innerHTML = `Scenario: <span class="hint">${code.split('-')[0]} preset</span> • <span class="hint">${label}</span>`;
-    updateViewerStatus(); // Sync viewer status when scenario changes
   }
 
   // ---------- Confirm modal ----------
   const confirmModal = $('#confirmModal');
   function openConfirm(type){
     const map = {
-      accept: `<b>Accept &amp; Send Link</b><br/>We'll generate a scheduling/join link and notify the viewer.`,
-      needs : `<b>Needs Info</b><br/>We'll ask the viewer to clarify scope or provide materials.`,
-      nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>"Thanks for reaching out. This isn't a fit right now, but wishing you success."</em>`
+      accept: `<b>Accept &amp; Send Link</b><br/>We’ll generate a scheduling/join link and notify the viewer.`,
+      needs : `<b>Needs Info</b><br/>We’ll ask the viewer to clarify scope or provide materials.`,
+      nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>“Thanks for reaching out. This isn’t a fit right now, but wishing you success.”</em>`
     };
     PENDING_ACTION = type;
     $('#confirmText').innerHTML = map[type] || '';
@@ -400,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   function applyAction(){
     closeConfirm();
-    if (STEP < 3) setStep(3); else setStep(4);
+    if (state.step < 3) setState({step: 3}); else setState({step: 4});
     alert('Action applied: ' + PENDING_ACTION);
     PENDING_ACTION = null;
   }
@@ -421,34 +373,37 @@ document.addEventListener('DOMContentLoaded', function(){
   })();
 
   // ---------- Wire basic controls ----------
-  $('#btn-owner').addEventListener('click', ()=> setView('owner'));
-  $('#btn-viewer').addEventListener('click', ()=> setView('viewer'));
-  // availability buttons
-  document.querySelectorAll('#availabilityToggle .pill').forEach(btn=>{
-    btn.addEventListener('click', ()=> setAvail(btn.dataset.state));
+  $('#btn-owner').addEventListener('click', ()=> setState({view: 'owner'}));
+  $('#btn-viewer').addEventListener('click', ()=> setState({view: 'viewer'}));
+  
+  $$('#availabilityToggle .pill').forEach(btn=>{
+    btn.addEventListener('click', ()=> setState({availability: btn.dataset.state}));
   });
-  // scenario
+  
   $('#scenarioPicker').addEventListener('change', e=> applyScenario(e.target.value));
-  // next-step actions
+  
   $('#btn-accept').addEventListener('click', ()=> openConfirm('accept'));
   $('#btn-needs').addEventListener('click',  ()=> openConfirm('needs'));
   $('#btn-nope').addEventListener('click',   ()=> openConfirm('nope'));
-  // confirm modal buttons
+  
   $('#confirmApply').addEventListener('click', applyAction);
   $('#confirmBack').addEventListener('click', closeConfirm);
   $('#confirmClose').addEventListener('click', closeConfirm);
   $('#confirmBackdrop').addEventListener('click', closeConfirm);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape") closeConfirm();
+  });
+
 
   // ---------- Initial state ----------
-  setView('owner'); setAvail('available'); setStep(1); setScore(78);
-  updateViewerStatus(); // Ensure viewer status is initialized
+  applyScenario('C-available');
 
   // ---------- Guided Tour config ----------
   window.TourConfig = {
     owner: [
       { sel:'#viewToggle', title:'Pick your view', body:'Toggle between Viewer and Owner to see each side of a LinkUp.', place:'bottom' },
       { sel:'#availabilityToggle', title:'Availability', body:'Mark yourself Available or Away. Viewers will see this instantly.', place:'bottom',
-        run:()=> setAvail(AVAIL) },
+        run:()=> setState({availability: state.availability}) },
       { sel:'#scenarioSelect', title:'Scenario presets (demo-only)', body:'Instantly load common states (availability, progress step, and score). Great for presentations—no real data is changed.', place:'bottom' },
       { sel:'#profilesRow', title:'People', body:'Owner ↔ Viewer cards. Tap to see mini-profiles.', place:'top' },
       { sel:'#viewerRequest', title:'Viewer Request & 1-Liner', body:'The action they chose (e.g., Schedule a Call) and their one-sentence context in quotes.', place:'top' },
@@ -456,17 +411,17 @@ document.addEventListener('DOMContentLoaded', function(){
       { sel:'#nextStepCardOwner', title:'Next step', body:'Choose one: Accept & Send Link, Needs Info, or Not a Fit (preview message shown before confirming).', place:'left' },
       { sel:'#progressSection', title:'Timeline + expiry', body:'Labels and progress share one grid; the fill snaps to the end of each phase segment.', place:'top' },
       { sel:'#footerActions', title:'Quick actions', body:'Download vCard, add to calendar, or open the public LinkUp page.', place:'top' },
-      { sel:null, finish:true, title:'All set', body:'That's the Owner view. Try the Viewer tour to see the other side.' }
+      { sel:null, finish:true, title:'All set', body:'That’s the Owner view. Try the Viewer tour to see the other side.' }
     ],
     viewer: [
       { sel:'#viewToggle', title:'Pick your view', body:'Switch to Viewer to experience what visitors see.', place:'bottom',
-        run:()=> setView('viewer') },
+        run:()=> setState({view: 'viewer'}) },
       { sel:'#viewerRequest', title:'Your request', body:'Your selected action and your 1-liner appear here.', place:'top' },
       { sel:'#compatibilityCard', title:'Compatibility snapshot', body:'Quick read on mutual fit. High score? Proceed. Low? Maybe pause—especially if owner is Away.', place:'left' },
       { sel:'#progressSection', title:'Status + deadline', body:'See where things stand and when the LinkUp expires.', place:'top' },
-      { sel:'#nextStepCardViewer', title:'What happens next', body:'Owner chooses an action. You\'ll get the link or message here.', place:'left' },
+      { sel:'#nextStepCardViewer', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
       { sel:'#footerActions', title:'Open public page', body:'Check details or share from the public LinkUp page.', place:'top' },
-      { sel:null, finish:true, title:'That's it', body:'Short, decisive, no thread fatigue. You're done.' }
+      { sel:null, finish:true, title:'That’s it', body:'Short, decisive, no thread fatigue. You’re done.' }
     ]
   };
 
@@ -560,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function(){
       window.addEventListener('resize', onRes);
       window.addEventListener('scroll', onRes);
       // keep page view in sync
-      if(mode==='owner'){ setView('owner'); } else { setView('viewer'); }
+      if(mode==='owner'){ setState({view: 'owner'}); } else { setState({view: 'viewer'}); }
     }
 
     // Button handlers
