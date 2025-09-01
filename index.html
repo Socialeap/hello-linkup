@@ -53,6 +53,16 @@
   .tour-launch button:hover{background:rgba(167,139,250,.22)}
   .tour-overlay{position:fixed;inset:0;z-index:50;pointer-events:none;display:none}
   .tour-overlay[data-open="1"]{display:block}
+/* enable interaction when the tour is open */
+.tour-overlay[data-open="1"]{display:block; pointer-events:auto}
+
+/* make sure the bubble and its buttons can receive clicks */
+.tour-bubble{pointer-events:auto}
+.tour-ctr .tour-btn{pointer-events:auto; cursor:pointer}
+
+/* optional: allow clicking the dark backdrop to close; avoid the spot stealing clicks */
+.tour-dim{pointer-events:auto}
+.tour-spot{pointer-events:none}
   .tour-dim{position:absolute;inset:0;background:rgba(5,6,16,.66);backdrop-filter:saturate(120%) blur(2px)}
   .tour-spot{position:absolute;border-radius:14px;box-shadow:0 0 0 2px rgba(139,92,246,.55), 0 0 0 10px rgba(139,92,246,.18), 0 12px 28px rgba(0,0,0,.55);pointer-events:none;transition:all .18s ease}
   .tour-bubble{position:absolute;min-width:280px;max-width:420px;color:#e9e9ff;
@@ -263,127 +273,10 @@
 </div>
 
 <script>
-/* ===== State & helpers ===== */
-let CURRENT_VIEW = 'owner'; // 'owner' | 'viewer'
-let AVAIL = 'available';    // 'available' | 'away'
-let STEP = 1;               // 1..4 (Submitted, Viewed, Acted, Closed)
-let SCORE = 78;             // 0..100
-
-const $ = s => document.querySelector(s);
+/* ===== Guided Tour (fixed handlers) ===== */
+function rectAbs(el){ const r = el.getBoundingClientRect(); return {x:r.left+window.scrollX, y:r.top+window.scrollY, w:r.width, h:r.height}; }
 function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
 
-/* View / Availability */
-function setView(v){
-  CURRENT_VIEW = v;
-  $('#btn-owner').classList.toggle('sel', v==='owner');
-  $('#btn-viewer').classList.toggle('sel', v==='viewer');
-  $('#scenarioHint').querySelector('.hint').textContent = v==='owner' ? 'Owner console view' : 'Viewer experience';
-}
-function setAvail(a){
-  AVAIL = a;
-  document.querySelectorAll('#availabilityToggle .pill').forEach(b => b.classList.toggle('sel', b.dataset.state===a));
-  $('#availLabel').textContent = a==='away' ? 'Owner away' : 'Owner available';
-  $('#ownerBusyBadge').classList.toggle('hidden', a!=='away');
-}
-
-/* Score (bar + number stay in sync) */
-function setScore(n){
-  SCORE = clamp(parseInt(n||0,10), 0, 100);
-  $('#scoreNum').textContent = SCORE;
-  $('#scoreFill').style.width = SCORE + '%';
-}
-
-/* Phases / progress (bar end aligns with label grid) */
-function setStep(n){
-  STEP = clamp(parseInt(n||1,10), 1, 4);
-  // dot states
-  $('#dot-submitted').classList.toggle('active', STEP >= 1);
-  $('#dot-viewed').classList.toggle('active',   STEP >= 2);
-  $('#dot-acted').classList.toggle('active',    STEP >= 3);
-  $('#dot-closed').classList.toggle('active',   STEP >= 4);
-  // bar width: 1→25%, 2→50%, 3→75%, 4→100%
-  const pct = ((STEP - 1) / 3) * 100;
-  $('#phaseFill').style.width = pct + '%';
-}
-
-/* Actions */
-function confirmAction(type){
-  const map = {
-    accept: `<b>Accept & Send Link</b><br/>We’ll generate a scheduling/join link and notify the viewer.`,
-    needs : `<b>Needs Info</b><br/>We’ll ask the viewer to clarify scope or provide materials.`,
-    nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>“Thanks for reaching out. This isn’t a fit right now, but wishing you success.”</em>`
-  };
-  window.__pendingAction = type;
-  $('#confirmText').innerHTML = map[type] || '';
-  const m = $('#confirmModal'); m.classList.remove('hidden'); m.classList.add('flex');
-}
-function closeConfirm(){ const m = $('#confirmModal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-function applyAction(){
-  closeConfirm();
-  if (STEP < 3) setStep(3); else setStep(4);
-  alert('Action applied: ' + window.__pendingAction);
-}
-
-/* Expiry countdown (static seed for demo) */
-(function(){
-  const start = Date.now();
-  const ttl = 6*24*60*60*1000 + 23*60*60*1000 + 43*60*1000;
-  function tick(){
-    const remain = Math.max(0, ttl - (Date.now()-start));
-    const d = Math.floor(remain/86400000);
-    const h = Math.floor((remain%86400000)/3600000);
-    const m = Math.floor((remain%3600000)/60000);
-    $('#expiry').textContent = `Expires in ${d}d ${h}h ${m}m`;
-    setTimeout(tick, 20000);
-  }
-  tick();
-})();
-
-/* Scenario presets (demo-only). They quickly set availability, step, and score. */
-function applyScenario(code){
-  switch(code){
-    case 'D-away':       setAvail('away');      setStep(1); setScore(62); $('#confText').textContent='Medium'; break;
-    case 'C-available':  setAvail('available'); setStep(1); setScore(78); $('#confText').textContent='High'; break;
-    case 'B-followup':   setAvail('available'); setStep(2); setScore(55); $('#confText').textContent='Low'; break;
-    case 'A-accepted':   setAvail('available'); setStep(3); setScore(84); $('#confText').textContent='High'; break;
-  }
-  const label = code.includes('away') ? 'Owner away' : 'Owner available';
-  $('#scenarioHint').innerHTML = `Scenario: <span class="hint">${code.split('-')[0]} preset</span> • <span class="hint">${label}</span>`;
-}
-$('#scenarioPicker').addEventListener('change', e=> applyScenario(e.target.value));
-
-/* Init */
-setView('owner'); setAvail('available'); setStep(1); setScore(78);
-
-/* ===== Guided Tour ===== */
-const TourConfig = {
-  owner: [
-    { sel:'#viewToggle', title:'Pick your view', body:'Toggle between Viewer and Owner to see each side of a LinkUp.', place:'bottom' },
-    { sel:'#availabilityToggle', title:'Availability', body:'Mark yourself Available or Away. Viewers will see this instantly.', place:'bottom',
-      run:()=> setAvail(AVAIL) },
-    { sel:'#scenarioSelect', title:'Scenario presets (demo-only)', body:'Use these to instantly populate the page into common states (availability, progress step, and score). Great for presentations—no real data is changed.', place:'bottom' },
-    { sel:'#profilesRow', title:'People', body:'Owner ↔ Viewer cards. Tap to see mini-profiles.', place:'top' },
-    { sel:'#viewerRequest', title:'Viewer Request & 1-Liner', body:'The action they chose (e.g., Schedule a Call) and their one-sentence context in quotes.', place:'top' },
-    { sel:'#compatibilityCard', title:'Compatibility', body:'AI score + reasons. Confidence reflects data quality.', place:'left' },
-    { sel:'#nextStepCard', title:'Next step', body:'Choose one: Accept & Send Link, Needs Info, or Not a Fit (preview message shown before confirming).', place:'left' },
-    { sel:'#progressSection', title:'Timeline + expiry', body:'Labels and progress share one grid; the fill snaps to the end of each phase segment.', place:'top' },
-    { sel:'#footerActions', title:'Quick actions', body:'Download vCard, add to calendar, or open the public LinkUp page.', place:'top' },
-    { sel:null, finish:true, title:'All set', body:'That’s the Owner view. Try the Viewer tour to see the other side.' }
-  ],
-  viewer: [
-    { sel:'#viewToggle', title:'Pick your view', body:'Switch to Viewer to experience what visitors see.', place:'bottom',
-      run:()=> setView('viewer') },
-    { sel:'#viewerRequest', title:'Your request', body:'Your selected action and your 1-liner appear here.', place:'top' },
-    { sel:'#compatibilityCard', title:'Compatibility snapshot', body:'Quick read on mutual fit. High score? Proceed. Low? Maybe pause—especially if owner is Away.', place:'left' },
-    { sel:'#progressSection', title:'Status + deadline', body:'See where things stand and when the LinkUp expires.', place:'top' },
-    { sel:'#nextStepCard', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
-    { sel:'#footerActions', title:'Open public page', body:'Check details or share from the public LinkUp page.', place:'top' },
-    { sel:null, finish:true, title:'That’s it', body:'Short, decisive, no thread fatigue. You’re done.' }
-  ]
-};
-
-// Tour engine
-function rectAbs(el){ const r = el.getBoundingClientRect(); return {x:r.left+window.scrollX, y:r.top+window.scrollY, w:r.width, h:r.height}; }
 (function(){
   const overlay = document.getElementById('tour-overlay');
   const bubble  = document.getElementById('tour-bubble');
@@ -395,6 +288,7 @@ function rectAbs(el){ const r = el.getBoundingClientRect(); return {x:r.left+win
   const btnPrev = document.getElementById('tour-prev');
   const btnNext = document.getElementById('tour-next');
   const btnSkip = document.getElementById('tour-skip');
+  const dim     = overlay.querySelector('.tour-dim');
 
   let steps=[], idx=0, running=false;
 
@@ -449,21 +343,41 @@ function rectAbs(el){ const r = el.getBoundingClientRect(); return {x:r.left+win
       btnNext.textContent='Next'; btnSkip.style.display='inline-block';
     },180);
   }
-  function end(){ running=false; overlay.removeAttribute('data-open'); window.removeEventListener('resize',onRes); window.removeEventListener('scroll',onRes); }
+  function end(){
+    running=false;
+    overlay.removeAttribute('data-open');
+    window.removeEventListener('resize', onRes);
+    window.removeEventListener('scroll', onRes);
+  }
   function onRes(){ if(running) showStep(idx); }
   function start(mode){
-    steps=(TourConfig[mode]||[]).slice(0);
-    if(!steps.length) return; running=true; idx=0;
-    overlay.setAttribute('data-open','1'); requestAnimationFrame(()=>showStep(0));
-    window.addEventListener('resize',onRes); window.addEventListener('scroll',onRes);
-    if(mode==='owner') setView('owner'); else setView('viewer');
+    steps=(window.TourConfig && window.TourConfig[mode]) ? window.TourConfig[mode].slice(0) : [];
+    if(!steps.length) return;
+    running=true; idx=0;
+    overlay.setAttribute('data-open','1');
+    requestAnimationFrame(()=>showStep(0));
+    window.addEventListener('resize', onRes);
+    window.addEventListener('scroll', onRes);
+    if(mode==='owner'){ if(window.setView) window.setView('owner'); }
+    else { if(window.setView) window.setView('viewer'); }
   }
 
-  document.getElementById('tour-owner-btn').addEventListener('click', ()=> start('owner'));
-  document.getElementById('tour-viewer-btn').addEventListener('click', ()=> start('viewer'));
-  window.LinkUpTour = { start:end=>start(end), end };
-  // Auto-start owner tour after load (remove if undesired)
-  setTimeout(()=>start('owner'), 1200);
+  /* Button handlers (the crucial fix) */
+  btnNext.addEventListener('click', ()=> {
+    const s = steps[idx];
+    if (s && s.finish) { end(); return; }
+    showStep(idx + 1);
+  });
+  btnPrev.addEventListener('click', ()=> showStep(Math.max(0, idx - 1)));
+  btnSkip.addEventListener('click', end);
+  dim.addEventListener('click', end); // click dark backdrop to close
+
+  // Launchers
+  document.getElementById('tour-owner-btn')?.addEventListener('click', ()=> start('owner'));
+  document.getElementById('tour-viewer-btn')?.addEventListener('click', ()=> start('viewer'));
+
+  // Expose for programmatic start if needed
+  window.LinkUpTour = { start, end };
 })();
 </script>
 </body>
