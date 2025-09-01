@@ -3,88 +3,89 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Hello! LinkUp — Handshake Demo + Guided Tour (fixed)</title>
+<title>Hello! LinkUp — Demo + Guided Tour (stable)</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
+
 <style>
   :root{
-    --ink:#EAEAF6; --muted:#A9AFD9; --panel:rgba(29,22,52,.85); --panel-2:rgba(25,19,45,.9);
-    --line:rgba(140,106,240,.35); --accent:#A78BFA; --accent-2:#8B5CF6; --teal:#22D3EE;
+    --ink:#EAEAF6; --muted:#A9AFD9;
+    --panel:rgba(29,22,52,.85); --panel-2:rgba(25,19,45,.9);
+    --line:rgba(140,106,240,.35);
+    --accent:#A78BFA; --accent-2:#8B5CF6; --teal:#22D3EE;
   }
   html,body{height:100%}
-  body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+  body{
+    font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
     background:
       radial-gradient(1200px 600px at 20% -10%, rgba(124,58,237,.25), transparent 60%),
       radial-gradient(1200px 600px at 120% 0%, rgba(34,211,238,.16), transparent 55%),
-      linear-gradient(180deg, #0D0B17, #0E0B1A 40%, #0C0A16 100%);}
-  .glass{background:var(--panel); border:1px solid var(--line); box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05); backdrop-filter: blur(8px)}
+      linear-gradient(180deg, #0D0B17, #0E0B1A 40%, #0C0A16 100%);
+  }
+  .glass{background:var(--panel); border:1px solid var(--line);
+    box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05);
+    backdrop-filter: blur(8px)}
   .chip{border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.06)}
   .chip.sel{background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#170E2F; border-color:transparent; font-weight:800}
   .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#170E2F; font-weight:800}
   .btn{border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.06)}
   .tag{font-size:.75rem; padding:.2rem .55rem; border-radius:999px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06)}
   .pill{padding:.35rem .7rem; border-radius:999px}
-  .avatar{width:52px;height:52px;border-radius:999px;object-fit:cover;border:2px solid rgba(255,255,255,.14)}
-  .card-title{color:#C7B7FF;font-weight:800;letter-spacing:.2px}
   .small{color:var(--muted);font-size:.85rem}
-  .hint{color:#C9D1FF}
+  .card-title{color:#C7B7FF;font-weight:800;letter-spacing:.2px}
+  .avatar{width:52px;height:52px;border-radius:999px;object-fit:cover;border:2px solid rgba(255,255,255,.14)}
   .dot{width:10px;height:10px;border-radius:999px;background:rgba(167,139,250,.55);display:inline-block;margin-right:.5rem}
   .dot.active{background:linear-gradient(180deg,var(--teal),var(--accent))}
 
-  /* Score bar (value-driven) */
+  /* Score */
   .score-wrap{display:flex;align-items:center;gap:.5rem}
   .score-track{width:130px;height:8px;border-radius:999px;background:rgba(255,255,255,.08);position:relative;overflow:hidden}
-  .score-fill{position:absolute;inset:0 0 0 auto;height:100%;border-radius:999px;background:linear-gradient(90deg,#EF4444,#F59E0B,#22C55E);width:0%}
+  .score-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#EF4444,#F59E0B,#22C55E);width:0%}
 
-  /* Progress section: labels and single continuous bar share the same grid width */
-  .phase-wrap{display:grid;grid-template-columns:repeat(4,1fr);column-gap:12px;align-items:center}
+  /* Phases + single continuous bar (grid-aligned) */
+  .phase-wrap{display:grid;grid-template-columns:repeat(4,1fr);column-gap:12px;row-gap:10px;align-items:center}
   .phase-label{display:flex;align-items:center;gap:.4rem;min-height:26px}
   .phase-track{grid-column:1/-1;position:relative;height:8px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);overflow:hidden}
   .phase-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--accent));width:0%}
   .phase-tick{position:absolute;top:-6px;width:1px;height:20px;background:rgba(255,255,255,.12)}
   .phase-tick.t25{left:25%} .phase-tick.t50{left:50%} .phase-tick.t75{left:75%}
 
-  /* Guided tour styles */
+  /* Guided tour */
   .tour-launch{position:fixed;right:14px;top:14px;z-index:60;display:flex;gap:8px}
   .tour-launch button{border:1px solid rgba(167,139,250,.35);background:rgba(167,139,250,.12);
     color:#e9e9ff;border-radius:999px;padding:6px 10px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.35);cursor:pointer}
   .tour-launch button:hover{background:rgba(167,139,250,.22)}
+
   .tour-overlay{position:fixed;inset:0;z-index:50;pointer-events:none;display:none}
-  .tour-overlay[data-open="1"]{display:block}
-/* enable interaction when the tour is open */
-.tour-overlay[data-open="1"]{display:block; pointer-events:auto}
-
-/* make sure the bubble and its buttons can receive clicks */
-.tour-bubble{pointer-events:auto}
-.tour-ctr .tour-btn{pointer-events:auto; cursor:pointer}
-
-/* optional: allow clicking the dark backdrop to close; avoid the spot stealing clicks */
-.tour-dim{pointer-events:auto}
-.tour-spot{pointer-events:none}
-  .tour-dim{position:absolute;inset:0;background:rgba(5,6,16,.66);backdrop-filter:saturate(120%) blur(2px)}
+  .tour-overlay[data-open="1"]{display:block; pointer-events:auto} /* clicks only when open */
+  .tour-dim{position:absolute;inset:0;background:rgba(5,6,16,.66);backdrop-filter:saturate(120%) blur(2px); pointer-events:auto}
+  .tour-svg{position:absolute;inset:0;pointer-events:none}
   .tour-spot{position:absolute;border-radius:14px;box-shadow:0 0 0 2px rgba(139,92,246,.55), 0 0 0 10px rgba(139,92,246,.18), 0 12px 28px rgba(0,0,0,.55);pointer-events:none;transition:all .18s ease}
   .tour-bubble{position:absolute;min-width:280px;max-width:420px;color:#e9e9ff;
     background:linear-gradient(180deg,rgba(32,24,58,.96),rgba(25,18,48,.96));
     border:1px solid rgba(167,139,250,.28);border-radius:14px;padding:14px 14px 12px 14px;
-    box-shadow:0 16px 48px rgba(0,0,0,.6), inset 0 0 0 1px rgba(167,139,250,.14);opacity:0;transform:translateY(8px);transition:opacity .22s ease, transform .22s ease;pointer-events:auto}
+    box-shadow:0 16px 48px rgba(0,0,0,.6), inset 0 0 0 1px rgba(167,139,250,.14);
+    opacity:0;transform:translateY(8px);transition:opacity .22s ease, transform .22s ease;
+    pointer-events:auto}
   .tour-bubble[data-show="1"]{opacity:1;transform:translateY(0)}
   .tour-title{font-weight:800;letter-spacing:.2px;color:#c7b7ff;margin:0 0 6px 0}
   .tour-body{font-size:.95rem;color:#cad0ff;line-height:1.45}
   .tour-ctr{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
   .tour-btn{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#eaeaf6;
-    padding:8px 12px;border-radius:10px;cursor:pointer}
+    padding:8px 12px;border-radius:10px;cursor:pointer;pointer-events:auto}
   .tour-btn.primary{background:linear-gradient(180deg,#a78bfa,#8b5cf6);color:#170e2f;border-color:transparent;font-weight:800}
   .tour-step{font-size:.78rem;color:#9aa0d6;margin-top:6px}
-  .tour-svg{position:absolute;inset:0;pointer-events:none}
   .tour-arrow{stroke:url(#tourGrad);stroke-width:2.2}
   .tour-arrow-head{fill:#a78bfa}
 </style>
 </head>
 <body>
 
-<!-- Tour launchers -->
+<!-- Launchers (manual start; no auto-start to avoid blocking interactions) -->
 <div class="tour-launch">
   <button id="tour-owner-btn">Owner tour</button>
   <button id="tour-viewer-btn">Viewer tour</button>
@@ -113,22 +114,22 @@
       <!-- Availability -->
       <div id="availabilityToggle" class="ml-auto flex items-center gap-2">
         <span class="small">Owner availability:</span>
-        <button data-state="available" class="chip pill px-3 py-1 sel" onclick="setAvail('available')">Available</button>
-        <button data-state="away" class="chip pill px-3 py-1" onclick="setAvail('away')">Away</button>
+        <button data-state="available" class="chip pill px-3 py-1 sel" type="button">Available</button>
+        <button data-state="away" class="chip pill px-3 py-1" type="button">Away</button>
       </div>
 
       <!-- View toggle -->
       <div id="viewToggle" class="flex items-center gap-1 ml-3">
         <span class="small">View as:</span>
-        <button id="btn-viewer" class="chip pill px-3 py-1" onclick="setView('viewer')">Viewer</button>
-        <button id="btn-owner" class="chip pill px-3 py-1 sel" onclick="setView('owner')">Owner</button>
+        <button id="btn-viewer" class="chip pill px-3 py-1" type="button">Viewer</button>
+        <button id="btn-owner" class="chip pill px-3 py-1 sel" type="button">Owner</button>
       </div>
     </div>
 
     <div id="scenarioHint" class="mt-3 small">Scenario: <span class="hint">Fresh new</span> • <span id="availLabel" class="hint">Owner available</span></div>
   </div>
 
-  <!-- People row -->
+  <!-- People -->
   <div id="profilesRow" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
     <div class="glass rounded-2xl p-4 flex items-center gap-4">
       <img class="avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop" alt="Owner">
@@ -156,7 +157,7 @@
       <div id="viewerRequest" class="glass rounded-2xl p-4">
         <div class="card-title text-sm mb-2">Viewer Request &amp; 1-Liner</div>
         <div class="flex items-center gap-3 mb-2">
-          <span class="pill chip px-3 py-1 text-sm">Action selected: Schedule a Call</span>
+          <span id="actionPill" class="pill chip px-3 py-1 text-sm">Action selected: Schedule a Call</span>
         </div>
         <div class="small opacity-90">“<span id="oneLiner">Travel app MVP — need fast UI polish + design tokens</span>”</div>
       </div>
@@ -192,9 +193,9 @@
       <div id="nextStepCard" class="glass rounded-2xl p-4">
         <div class="card-title text-sm mb-2">Next step</div>
         <div class="space-y-3">
-          <button class="btn-primary w-full rounded-xl py-3" onclick="confirmAction('accept')">Accept &amp; Send Link</button>
-          <button class="btn w-full rounded-xl py-3" onclick="confirmAction('needs')">Needs Info</button>
-          <button class="btn w-full rounded-xl py-3" onclick="confirmAction('nope')">Not a Fit</button>
+          <button class="btn-primary w-full rounded-xl py-3" id="btn-accept" type="button">Accept &amp; Send Link</button>
+          <button class="btn w-full rounded-xl py-3" id="btn-needs"   type="button">Needs Info</button>
+          <button class="btn w-full rounded-xl py-3" id="btn-nope"    type="button">Not a Fit</button>
         </div>
         <div class="small mt-3">Choose one action to keep this LinkUp fresh.</div>
       </div>
@@ -202,9 +203,9 @@
     </div>
   </div>
 
-  <!-- Phases + Progress (aligned) -->
+  <!-- Phases + Progress -->
   <div id="progressSection" class="glass rounded-2xl p-4 mt-6">
-    <div class="phase-wrap" style="row-gap:10px;">
+    <div class="phase-wrap">
       <div class="phase-label"><span class="dot active" id="dot-submitted"></span>Submitted</div>
       <div class="phase-label"><span class="dot" id="dot-viewed"></span>Owner viewed</div>
       <div class="phase-label"><span class="dot" id="dot-acted"></span>Owner acted</div>
@@ -220,10 +221,10 @@
     <div id="expiry" class="small mt-2">Expires in 6d 23h 43m</div>
   </div>
 
-  <!-- Footer actions -->
+  <!-- Footer -->
   <div id="footerActions" class="flex flex-wrap gap-3 mt-6">
-    <button class="btn rounded-xl px-4 py-2">Download vCard</button>
-    <button class="btn rounded-xl px-4 py-2">Add to Calendar</button>
+    <button class="btn rounded-xl px-4 py-2" type="button">Download vCard</button>
+    <button class="btn rounded-xl px-4 py-2" type="button">Add to Calendar</button>
     <a class="btn rounded-xl px-4 py-2" href="#" onclick="alert('Opening public LinkUp page…');return false;">Open public LinkUp page</a>
     <div class="small opacity-70 ml-auto">ID: —</div>
   </div>
@@ -232,21 +233,21 @@
 
 <!-- Confirm modal -->
 <div id="confirmModal" class="fixed inset-0 hidden items-center justify-center z-40">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeConfirm()"></div>
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="confirmBackdrop"></div>
   <div class="glass rounded-2xl p-5 w-[min(520px,92vw)] relative">
-    <button class="absolute right-3 top-3 chip rounded-lg px-2 py-1" onclick="closeConfirm()">✕</button>
+    <button class="absolute right-3 top-3 chip rounded-lg px-2 py-1" id="confirmClose" type="button">✕</button>
     <div class="card-title mb-1">Confirm action</div>
     <div id="confirmText" class="small mb-4"></div>
     <div class="flex gap-3 justify-end">
-      <button class="btn rounded-xl px-4 py-2" onclick="closeConfirm()">Back</button>
-      <button class="btn-primary rounded-xl px-4 py-2" onclick="applyAction()">Confirm</button>
+      <button class="btn rounded-xl px-4 py-2" id="confirmBack" type="button">Back</button>
+      <button class="btn-primary rounded-xl px-4 py-2" id="confirmApply" type="button">Confirm</button>
     </div>
   </div>
 </div>
 
-<!-- Guided tour layer -->
+<!-- Guided Tour Overlay -->
 <div id="tour-overlay" class="tour-overlay" aria-hidden="true">
-  <div class="tour-dim"></div>
+  <div class="tour-dim" id="tour-dim"></div>
   <svg class="tour-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
     <defs>
       <linearGradient id="tourGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -265,120 +266,268 @@
     <div id="tour-body" class="tour-body"></div>
     <div class="tour-step" id="tour-step-indicator"></div>
     <div class="tour-ctr">
-      <button id="tour-prev" class="tour-btn">Back</button>
-      <button id="tour-skip" class="tour-btn">Skip</button>
-      <button id="tour-next" class="tour-btn primary">Next</button>
+      <button id="tour-prev" class="tour-btn" type="button">Back</button>
+      <button id="tour-skip" class="tour-btn" type="button">Skip</button>
+      <button id="tour-next" class="tour-btn primary" type="button">Next</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ===== Guided Tour (fixed handlers) ===== */
-function rectAbs(el){ const r = el.getBoundingClientRect(); return {x:r.left+window.scrollX, y:r.top+window.scrollY, w:r.width, h:r.height}; }
-function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+document.addEventListener('DOMContentLoaded', function(){
+  // ---------- Helpers ----------
+  const $ = (s, root=document) => root.querySelector(s);
+  const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+  const rectAbs = (el)=>{ const r = el.getBoundingClientRect(); return {x:r.left+window.scrollX, y:r.top+window.scrollY, w:r.width, h:r.height}; };
 
-(function(){
-  const overlay = document.getElementById('tour-overlay');
-  const bubble  = document.getElementById('tour-bubble');
-  const spot    = document.getElementById('tour-spot');
-  const line    = document.getElementById('tour-line');
-  const tTitle  = document.getElementById('tour-title');
-  const tBody   = document.getElementById('tour-body');
-  const tStepI  = document.getElementById('tour-step-indicator');
-  const btnPrev = document.getElementById('tour-prev');
-  const btnNext = document.getElementById('tour-next');
-  const btnSkip = document.getElementById('tour-skip');
-  const dim     = overlay.querySelector('.tour-dim');
+  // ---------- State ----------
+  let CURRENT_VIEW = 'owner'; // 'owner' | 'viewer'
+  let AVAIL = 'available';    // 'available' | 'away'
+  let STEP = 1;               // 1..4 (Submitted, Viewed, Acted, Closed)
+  let SCORE = 78;             // 0..100
+  let PENDING_ACTION = null;
 
-  let steps=[], idx=0, running=false;
-
-  function placeBubble(targetRect, pref){
-    const pad=10, m=12; const bw=bubble.offsetWidth, bh=bubble.offsetHeight;
-    const vw=window.innerWidth, vh=window.innerHeight;
-    let top=0,left=0;
-    if(pref==='top'){ top=targetRect.y - bh - pad; left=targetRect.x + (targetRect.w - bw)/2; }
-    else if(pref==='left'){ top=targetRect.y + (targetRect.h - bh)/2; left=targetRect.x - bw - pad; }
-    else if(pref==='right'){ top=targetRect.y + (targetRect.h - bh)/2; left=targetRect.x + targetRect.w + pad; }
-    else { top=targetRect.y + targetRect.h + pad; left=targetRect.x + (targetRect.w - bw)/2; }
-    left = clamp(left, window.scrollX + m, window.scrollX + vw - bw - m);
-    top  = clamp(top,  window.scrollY + m, window.scrollY + vh - bh - m);
-    bubble.style.left = left + 'px'; bubble.style.top = top + 'px';
+  // ---------- UI Updaters ----------
+  function setView(v){
+    CURRENT_VIEW = v;
+    $('#btn-owner').classList.toggle('sel', v==='owner');
+    $('#btn-viewer').classList.toggle('sel', v==='viewer');
+    $('#scenarioHint').querySelector('.hint').textContent = v==='owner' ? 'Owner console view' : 'Viewer experience';
   }
-  function drawArrow(targetRect){
-    const br = bubble.getBoundingClientRect();
-    const bcx = br.left + br.width/2, bcy = br.top + br.height/2;
-    const tcx = targetRect.x + targetRect.w/2 - window.scrollX;
-    const tcy = targetRect.y + targetRect.h/2 - window.scrollY;
-    const svg = overlay.querySelector('svg.tour-svg');
-    svg.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
-    line.setAttribute('x1', bcx); line.setAttribute('y1', bcy);
-    line.setAttribute('x2', tcx); line.setAttribute('y2', tcy);
+  function setAvail(a){
+    AVAIL = a;
+    document.querySelectorAll('#availabilityToggle .pill').forEach(b => b.classList.toggle('sel', b.dataset.state===a));
+    $('#availLabel').textContent = a==='away' ? 'Owner away' : 'Owner available';
+    $('#ownerBusyBadge').classList.toggle('hidden', a!=='away');
   }
-  function showStep(i){
-    idx=i;
-    const step = steps[idx];
-    if(!step){ end(); return; }
-    if(step.finish){
-      spot.style.display='none'; line.style.opacity=0;
-      tTitle.textContent = step.title||'Done'; tBody.textContent = step.body||'';
-      tStepI.textContent=''; bubble.dataset.show='1';
-      bubble.style.left=(window.scrollX+24)+'px'; bubble.style.top=(window.scrollY+24)+'px';
-      btnPrev.style.display = idx===0?'none':'inline-block';
-      btnNext.textContent='Close'; btnSkip.style.display='none';
-      return;
+  function setScore(n){
+    SCORE = clamp(parseInt(n||0,10), 0, 100);
+    $('#scoreNum').textContent = SCORE;
+    $('#scoreFill').style.width = SCORE + '%';
+    $('#confText').textContent = SCORE >= 75 ? 'High' : SCORE >= 60 ? 'Medium' : 'Low';
+  }
+  function setStep(n){
+    STEP = clamp(parseInt(n||1,10), 1, 4);
+    $('#dot-submitted').classList.toggle('active', STEP >= 1);
+    $('#dot-viewed').classList.toggle('active',   STEP >= 2);
+    $('#dot-acted').classList.toggle('active',    STEP >= 3);
+    $('#dot-closed').classList.toggle('active',   STEP >= 4);
+    // Fill to the END of the completed phase: 1→25%, 2→50%, 3→75%, 4→100%
+    const pct = (STEP/4) * 100;
+    $('#phaseFill').style.width = pct + '%';
+  }
+
+  // ---------- Scenario presets (demo only) ----------
+  function applyScenario(code){
+    switch(code){
+      case 'D-away':       setAvail('away');      setStep(1); setScore(62); break;
+      case 'C-available':  setAvail('available'); setStep(1); setScore(78); break;
+      case 'B-followup':   setAvail('available'); setStep(2); setScore(55); break;
+      case 'A-accepted':   setAvail('available'); setStep(3); setScore(84); break;
     }
-    const target = step.sel? document.querySelector(step.sel) : null;
-    if(step.run) try{ step.run(); }catch(e){}
-    if(!target){ showStep(idx+1); return; }
-    target.scrollIntoView({behavior:'smooth', block:'center'}); 
-    setTimeout(()=>{
-      const r = rectAbs(target);
-      spot.style.display='block';
-      spot.style.left=(r.x-6)+'px'; spot.style.top=(r.y-6)+'px';
-      spot.style.width=(r.w+12)+'px'; spot.style.height=(r.h+12)+'px';
-      tTitle.textContent=step.title||''; tBody.textContent=step.body||'';
-      tStepI.textContent=`Step ${idx+1} of ${steps.length}`;
-      placeBubble(r, step.place||'bottom'); drawArrow(r); line.style.opacity=1;
-      bubble.dataset.show='1'; btnPrev.style.display = idx===0?'none':'inline-block';
-      btnNext.textContent='Next'; btnSkip.style.display='inline-block';
-    },180);
-  }
-  function end(){
-    running=false;
-    overlay.removeAttribute('data-open');
-    window.removeEventListener('resize', onRes);
-    window.removeEventListener('scroll', onRes);
-  }
-  function onRes(){ if(running) showStep(idx); }
-  function start(mode){
-    steps=(window.TourConfig && window.TourConfig[mode]) ? window.TourConfig[mode].slice(0) : [];
-    if(!steps.length) return;
-    running=true; idx=0;
-    overlay.setAttribute('data-open','1');
-    requestAnimationFrame(()=>showStep(0));
-    window.addEventListener('resize', onRes);
-    window.addEventListener('scroll', onRes);
-    if(mode==='owner'){ if(window.setView) window.setView('owner'); }
-    else { if(window.setView) window.setView('viewer'); }
+    const label = code.includes('away') ? 'Owner away' : 'Owner available';
+    $('#scenarioHint').innerHTML = `Scenario: <span class="hint">${code.split('-')[0]} preset</span> • <span class="hint">${label}</span>`;
   }
 
-  /* Button handlers (the crucial fix) */
-  btnNext.addEventListener('click', ()=> {
-    const s = steps[idx];
-    if (s && s.finish) { end(); return; }
-    showStep(idx + 1);
+  // ---------- Confirm modal ----------
+  const confirmModal = $('#confirmModal');
+  function openConfirm(type){
+    const map = {
+      accept: `<b>Accept &amp; Send Link</b><br/>We’ll generate a scheduling/join link and notify the viewer.`,
+      needs : `<b>Needs Info</b><br/>We’ll ask the viewer to clarify scope or provide materials.`,
+      nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>“Thanks for reaching out. This isn’t a fit right now, but wishing you success.”</em>`
+    };
+    PENDING_ACTION = type;
+    $('#confirmText').innerHTML = map[type] || '';
+    confirmModal.classList.remove('hidden');
+    confirmModal.classList.add('flex');
+  }
+  function closeConfirm(){
+    confirmModal.classList.add('hidden');
+    confirmModal.classList.remove('flex');
+  }
+  function applyAction(){
+    closeConfirm();
+    if (STEP < 3) setStep(3); else setStep(4);
+    alert('Action applied: ' + PENDING_ACTION);
+    PENDING_ACTION = null;
+  }
+
+  // ---------- Expiry countdown (static seed) ----------
+  (function(){
+    const start = Date.now();
+    const ttl = 6*24*60*60*1000 + 23*60*60*1000 + 43*60*1000;
+    function tick(){
+      const remain = Math.max(0, ttl - (Date.now()-start));
+      const d = Math.floor(remain/86400000);
+      const h = Math.floor((remain%86400000)/3600000);
+      const m = Math.floor((remain%3600000)/60000);
+      $('#expiry').textContent = `Expires in ${d}d ${h}h ${m}m`;
+      setTimeout(tick, 20000);
+    }
+    tick();
+  })();
+
+  // ---------- Wire basic controls ----------
+  $('#btn-owner').addEventListener('click', ()=> setView('owner'));
+  $('#btn-viewer').addEventListener('click', ()=> setView('viewer'));
+  // availability buttons
+  document.querySelectorAll('#availabilityToggle .pill').forEach(btn=>{
+    btn.addEventListener('click', ()=> setAvail(btn.dataset.state));
   });
-  btnPrev.addEventListener('click', ()=> showStep(Math.max(0, idx - 1)));
-  btnSkip.addEventListener('click', end);
-  dim.addEventListener('click', end); // click dark backdrop to close
+  // scenario
+  $('#scenarioPicker').addEventListener('change', e=> applyScenario(e.target.value));
+  // next-step actions
+  $('#btn-accept').addEventListener('click', ()=> openConfirm('accept'));
+  $('#btn-needs').addEventListener('click',  ()=> openConfirm('needs'));
+  $('#btn-nope').addEventListener('click',   ()=> openConfirm('nope'));
+  // confirm modal buttons
+  $('#confirmApply').addEventListener('click', applyAction);
+  $('#confirmBack').addEventListener('click', closeConfirm);
+  $('#confirmClose').addEventListener('click', closeConfirm);
+  $('#confirmBackdrop').addEventListener('click', closeConfirm);
 
-  // Launchers
-  document.getElementById('tour-owner-btn')?.addEventListener('click', ()=> start('owner'));
-  document.getElementById('tour-viewer-btn')?.addEventListener('click', ()=> start('viewer'));
+  // ---------- Initial state ----------
+  setView('owner'); setAvail('available'); setStep(1); setScore(78);
 
-  // Expose for programmatic start if needed
-  window.LinkUpTour = { start, end };
-})();
+  // ---------- Guided Tour config ----------
+  window.TourConfig = {
+    owner: [
+      { sel:'#viewToggle', title:'Pick your view', body:'Toggle between Viewer and Owner to see each side of a LinkUp.', place:'bottom' },
+      { sel:'#availabilityToggle', title:'Availability', body:'Mark yourself Available or Away. Viewers will see this instantly.', place:'bottom',
+        run:()=> setAvail(AVAIL) },
+      { sel:'#scenarioSelect', title:'Scenario presets (demo-only)', body:'Instantly load common states (availability, progress step, and score). Great for presentations—no real data is changed.', place:'bottom' },
+      { sel:'#profilesRow', title:'People', body:'Owner ↔ Viewer cards. Tap to see mini-profiles.', place:'top' },
+      { sel:'#viewerRequest', title:'Viewer Request & 1-Liner', body:'The action they chose (e.g., Schedule a Call) and their one-sentence context in quotes.', place:'top' },
+      { sel:'#compatibilityCard', title:'Compatibility', body:'AI score + reasons. Confidence reflects data quality.', place:'left' },
+      { sel:'#nextStepCard', title:'Next step', body:'Choose one: Accept & Send Link, Needs Info, or Not a Fit (preview message shown before confirming).', place:'left' },
+      { sel:'#progressSection', title:'Timeline + expiry', body:'Labels and progress share one grid; the fill snaps to the end of each phase segment.', place:'top' },
+      { sel:'#footerActions', title:'Quick actions', body:'Download vCard, add to calendar, or open the public LinkUp page.', place:'top' },
+      { sel:null, finish:true, title:'All set', body:'That’s the Owner view. Try the Viewer tour to see the other side.' }
+    ],
+    viewer: [
+      { sel:'#viewToggle', title:'Pick your view', body:'Switch to Viewer to experience what visitors see.', place:'bottom',
+        run:()=> setView('viewer') },
+      { sel:'#viewerRequest', title:'Your request', body:'Your selected action and your 1-liner appear here.', place:'top' },
+      { sel:'#compatibilityCard', title:'Compatibility snapshot', body:'Quick read on mutual fit. High score? Proceed. Low? Maybe pause—especially if owner is Away.', place:'left' },
+      { sel:'#progressSection', title:'Status + deadline', body:'See where things stand and when the LinkUp expires.', place:'top' },
+      { sel:'#nextStepCard', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
+      { sel:'#footerActions', title:'Open public page', body:'Check details or share from the public LinkUp page.', place:'top' },
+      { sel:null, finish:true, title:'That’s it', body:'Short, decisive, no thread fatigue. You’re done.' }
+    ]
+  };
+
+  // ---------- Guided Tour engine (stable, single instance) ----------
+  (function(){
+    const overlay = $('#tour-overlay');
+    const bubble  = $('#tour-bubble');
+    const spot    = $('#tour-spot');
+    const line    = $('#tour-line');
+    const tTitle  = $('#tour-title');
+    const tBody   = $('#tour-body');
+    const tStepI  = $('#tour-step-indicator');
+    const btnPrev = $('#tour-prev');
+    const btnNext = $('#tour-next');
+    const btnSkip = $('#tour-skip');
+    const dim     = $('#tour-dim');
+
+    let steps=[], idx=0, running=false;
+
+    function placeBubble(targetRect, pref){
+      const pad=10, m=12; const bw=bubble.offsetWidth, bh=bubble.offsetHeight;
+      const vw=window.innerWidth, vh=window.innerHeight;
+      let top=0,left=0;
+      if(pref==='top'){ top=targetRect.y - bh - pad; left=targetRect.x + (targetRect.w - bw)/2; }
+      else if(pref==='left'){ top=targetRect.y + (targetRect.h - bh)/2; left=targetRect.x - bw - pad; }
+      else if(pref==='right'){ top=targetRect.y + (targetRect.h - bh)/2; left=targetRect.x + targetRect.w + pad; }
+      else { top=targetRect.y + targetRect.h + pad; left=targetRect.x + (targetRect.w - bw)/2; }
+      left = clamp(left, window.scrollX + m, window.scrollX + vw - bw - m);
+      top  = clamp(top,  window.scrollY + m, window.scrollY + vh - bh - m);
+      bubble.style.left = left + 'px'; bubble.style.top = top + 'px';
+    }
+    function drawArrow(targetRect){
+      const br = bubble.getBoundingClientRect();
+      const bcx = br.left + br.width/2, bcy = br.top + br.height/2;
+      const tcx = targetRect.x + targetRect.w/2 - window.scrollX;
+      const tcy = targetRect.y + targetRect.h/2 - window.scrollY;
+      const svg = overlay.querySelector('svg.tour-svg');
+      svg.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+      line.setAttribute('x1', bcx); line.setAttribute('y1', bcy);
+      line.setAttribute('x2', tcx); line.setAttribute('y2', tcy);
+    }
+    function showStep(i){
+      idx=i;
+      const step = steps[idx];
+      if(!step){ end(); return; }
+
+      // Finish card
+      if(step.finish){
+        spot.style.display='none'; line.style.opacity=0;
+        tTitle.textContent = step.title||'Done'; tBody.textContent = step.body||'';
+        tStepI.textContent=''; bubble.dataset.show='1';
+        bubble.style.left=(window.scrollX+24)+'px'; bubble.style.top=(window.scrollY+24)+'px';
+        btnPrev.style.display = idx===0?'none':'inline-block';
+        btnNext.textContent='Close'; btnSkip.style.display='none';
+        return;
+      }
+
+      // Optional run hook
+      if(step.run) { try{ step.run(); }catch(e){} }
+
+      const target = step.sel? document.querySelector(step.sel) : null;
+      if(!target){ showStep(idx+1); return; }
+
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(()=>{
+        const r = rectAbs(target);
+        spot.style.display='block';
+        spot.style.left=(r.x-6)+'px'; spot.style.top=(r.y-6)+'px';
+        spot.style.width=(r.w+12)+'px'; spot.style.height=(r.h+12)+'px';
+        tTitle.textContent=step.title||''; tBody.textContent=step.body||'';
+        tStepI.textContent=`Step ${idx+1} of ${steps.length}`;
+        placeBubble(r, step.place||'bottom'); drawArrow(r); line.style.opacity=1;
+        bubble.dataset.show='1';
+        btnPrev.style.display = idx===0?'none':'inline-block';
+        btnNext.textContent='Next'; btnSkip.style.display='inline-block';
+      },180);
+    }
+    function end(){
+      running=false;
+      overlay.removeAttribute('data-open');
+      window.removeEventListener('resize', onRes);
+      window.removeEventListener('scroll', onRes);
+    }
+    function onRes(){ if(running) showStep(idx); }
+    function start(mode){
+      steps=(window.TourConfig && window.TourConfig[mode]) ? window.TourConfig[mode].slice(0) : [];
+      if(!steps.length) return;
+      running=true; idx=0;
+      overlay.setAttribute('data-open','1');
+      requestAnimationFrame(()=>showStep(0));
+      window.addEventListener('resize', onRes);
+      window.addEventListener('scroll', onRes);
+      // keep page view in sync
+      if(mode==='owner'){ setView('owner'); } else { setView('viewer'); }
+    }
+
+    // Button handlers
+    btnNext.addEventListener('click', ()=> {
+      const s = steps[idx];
+      if (s && s.finish) { end(); return; }
+      showStep(idx + 1);
+    });
+    btnPrev.addEventListener('click', ()=> showStep(Math.max(0, idx - 1)));
+    btnSkip.addEventListener('click', end);
+    dim.addEventListener('click', end); // click backdrop to close
+
+    // Launchers
+    $('#tour-owner-btn').addEventListener('click', ()=> start('owner'));
+    $('#tour-viewer-btn').addEventListener('click', ()=> start('viewer'));
+
+    // Expose if needed
+    window.LinkUpTour = { start, end };
+  })();
+});
 </script>
 </body>
 </html>
