@@ -1,415 +1,441 @@
-<!doctype html>
-<html lang='en'>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Hello – LinkUp Handshake Demo v7</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hello! LinkUp — Handshake Demo + Guided Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{--bg1:#0d0a1a;--bg2:#19122e;--card:rgba(19,16,34,.72);--card2:rgba(22,18,38,.85);--stroke:rgba(139,92,246,.28);
---text:#eaeaf6;--muted:#a5a3bb;--accent:#8b5cf6;--accent2:#a78bfa;--danger:#ff5d6c;--warn:#ffbf47;--shadow:0 8px 30px rgba(0,0,0,.35),inset 0 0 0 1px var(--stroke);--radius:18px;--radiusL:22px;--blur:saturate(120%) blur(12px)}
-*{box-sizing:border-box}
-body{margin:0;color:var(--text);background:radial-gradient(1200px 800px at 10% -10%,#2e1f54 0,transparent 60%),radial-gradient(1000px 600px at 110% 10%,#1e1340 0,transparent 60%),linear-gradient(180deg,var(--bg1),var(--bg2));font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;min-height:100vh}
-.container{max-width:1100px;margin:0 auto;padding:24px}
-.appbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 18px;margin:16px;border-radius:var(--radiusL);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));box-shadow:var(--shadow);backdrop-filter:var(--blur)}
-.brand{display:flex;align-items:center;gap:10px}.hello{font-weight:900;letter-spacing:.5px;font-size:22px;color:#b9a5ff;text-shadow:0 2px 20px rgba(167,139,250,.45)}.subtle{color:var(--muted);font-size:13px}
-.role{display:flex;align-items:center;gap:8px;margin-left:8px}.chip{padding:8px 12px;border-radius:999px;border:1px solid var(--stroke);color:var(--muted);background:rgba(255,255,255,.03);font-size:12px;cursor:pointer}
-.chip.active{color:#1a102f;background:var(--accent2);border-color:transparent}
-.select{appearance:none;height:36px;border-radius:10px;padding:0 34px 0 12px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--text)}
-.small{font-size:12px;color:var(--muted)}
-.identity{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:18px 0 18px}
-.pair{display:flex;align-items:center;gap:16px}
-.cardlet{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--card);box-shadow:var(--shadow);backdrop-filter:var(--blur);border:1px solid var(--stroke);position:relative}
-.avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;background:#261f3f}.avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.name{font-weight:600}.roleTxt{font-size:12px;color:var(--muted);margin-top:2px}.between{color:var(--muted);font-size:13px}
-.badgeAway{padding:4px 8px;border-radius:999px;border:1px solid rgba(255,93,108,.45);background:rgba(255,93,108,.12);color:#ff9aa3;font-size:11px;position:absolute;top:-8px;right:-8px}
-.grid{display:grid;grid-template-columns:1.2fr .85fr;gap:18px}@media(max-width:980px){.grid{grid-template-columns:1fr}}
-.panel{background:var(--card2);border-radius:var(--radiusL);border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:var(--blur);padding:18px}
-.summaryHead{display:flex;align-items:center;justify-content:space-between}.title{font-weight:700;letter-spacing:.3px}
-.intentWrap{margin-bottom:12px}
-.intentHdr{font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.2px}
-.intent{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px dashed rgba(167,139,250,.35)}
-.intent .pill{padding:2px 8px;border-radius:999px;background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4);font-size:12px;margin-right:6px}
-.pintent{font-size:13px;color:#ddd}
-.meter{height:10px;width:100%;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}.bar{height:100%;width:0;background:linear-gradient(90deg,#ff6580,#ffbf47,#00e0b8)}
-.bullets{margin:14px 0 4px;padding-left:16px}.bullets li{margin:8px 0;color:#e7e3ff}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--stroke);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:.15s}
-.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.25)}.btn:disabled{opacity:.55;cursor:not-allowed}.primary{background:linear-gradient(180deg,var(--accent2),var(--accent));border-color:transparent;color:#170e2f;font-weight:700}
-.actions{display:grid;gap:10px}.note{font-size:13px;color:var(--muted)}
-.confirmBox{margin-top:10px;padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(167,139,250,.35)}
-.confirmTitle{font-weight:700;margin-bottom:6px}.confirmHelp{font-size:13px;color:var(--muted);margin-bottom:10px}
-.confirmRow{display:flex;gap:10px;flex-wrap:wrap}
-.inline{display:grid;gap:10px;margin-top:10px}.field{display:grid;gap:6px}.label{font-size:12px;color:var(--muted)}
-.input, .textarea{width:100%;border-radius:10px;padding:10px 12px;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--stroke);outline:none}
-.input{height:40px}.textarea{min-height:80px;resize:vertical}
-/* === Phase section (aligned) === */
-.phaseWrap{margin-top:4px}
-.phaseGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:0 2px}
-.phase{display:flex;align-items:center;gap:8px}
-.dot{width:10px;height:10px;border-radius:50%;background:#5c4a93;border:1px solid var(--stroke)}
-.dot.active{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 10px var(--accent2)}
-.tlabel{font-size:12px;color:var(--muted)}
-.progressWrap{margin-top:8px;padding:0 2px}
-.progress{height:8px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);overflow:hidden}
-.pbar{height:100%;width:0;background:linear-gradient(90deg,#7c4dff,#a78bfa);transition:width .25s ease}
-.expiry{margin-top:8px;font-size:12px;color:var(--muted);padding:0 2px}
-/* Away control */
-#awayCtl{display:none;align-items:center;gap:8px}
-#awayCtl input{height:32px;border-radius:8px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--text);padding:0 8px}
-.preset{padding:6px 10px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.03);font-size:12px;cursor:pointer}
-.preset:hover{background:rgba(255,255,255,.06)}
-.footer{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:16px}.aLite{color:#c9c2ff;text-decoration:none;border-bottom:1px dotted rgba(201,194,255,.45)}
+  :root{
+    --ink:#EAEAF6; --muted:#A9AFD9; --panel:rgba(29,22,52,.85); --panel-2:rgba(25,19,45,.9);
+    --line:rgba(140,106,240,.35); --accent:#A78BFA; --accent-2:#8B5CF6; --teal:#22D3EE;
+  }
+  html,body{height:100%}
+  body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(124,58,237,.25), transparent 60%),
+      radial-gradient(1200px 600px at 120% 0%, rgba(34,211,238,.16), transparent 55%),
+      linear-gradient(180deg, #0D0B17, #0E0B1A 40%, #0C0A16 100%);}
+  .glass{background:var(--panel); border:1px solid var(--line); box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05); backdrop-filter: blur(8px)}
+  .chip{border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.06)}
+  .chip.sel{background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#170E2F; border-color:transparent; font-weight:800}
+  .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#170E2F; font-weight:800}
+  .btn{border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.06)}
+  .shadow-inner-1{box-shadow: inset 0 0 0 1px rgba(255,255,255,.06)}
+  .tag{font-size:.75rem; padding:.2rem .55rem; border-radius:999px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06)}
+  .pill{padding:.35rem .7rem; border-radius:999px}
+  .progress-wrap{height:8px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08)}
+  .progress-bar{height:100%; border-radius:999px; background:linear-gradient(90deg,var(--teal),var(--accent)); width:25%; transition:width .35s ease}
+  .score-bar{height:8px; border-radius:999px; background:linear-gradient(90deg,#EF4444,#F59E0B,#22C55E)}
+  .avatar{width:52px;height:52px;border-radius:999px;object-fit:cover;border:2px solid rgba(255,255,255,.14)}
+  .card-title{color:#C7B7FF;font-weight:800;letter-spacing:.2px}
+  .small{color:var(--muted);font-size:.85rem}
+  .hint{color:#C9D1FF}
+  .dot{width:10px;height:10px;border-radius:999px;background:rgba(167,139,250,.55);display:inline-block;margin-right:.5rem}
+  .dot.active{background:linear-gradient(180deg,var(--teal),var(--accent))}
+  /* launcher */
+  .tour-launch{position:fixed;right:14px;top:14px;z-index:60;display:flex;gap:8px}
+  .tour-launch button{border:1px solid rgba(167,139,250,.35);background:rgba(167,139,250,.12);
+    color:#e9e9ff;border-radius:999px;padding:6px 10px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.35);cursor:pointer}
+  .tour-launch button:hover{background:rgba(167,139,250,.22)}
+  /* ===== Guided tour layer ===== */
+  .tour-overlay{position:fixed;inset:0;z-index:50;pointer-events:none;display:none}
+  .tour-overlay[data-open="1"]{display:block}
+  .tour-dim{position:absolute;inset:0;background:rgba(5,6,16,.66);backdrop-filter:saturate(120%) blur(2px)}
+  .tour-spot{position:absolute;border-radius:14px;box-shadow:0 0 0 2px rgba(139,92,246,.55), 0 0 0 10px rgba(139,92,246,.18), 0 12px 28px rgba(0,0,0,.55);pointer-events:none;transition:all .18s ease}
+  .tour-bubble{position:absolute;min-width:280px;max-width:420px;color:#e9e9ff;
+    background:linear-gradient(180deg,rgba(32,24,58,.96),rgba(25,18,48,.96));
+    border:1px solid rgba(167,139,250,.28);border-radius:14px;padding:14px 14px 12px 14px;
+    box-shadow:0 16px 48px rgba(0,0,0,.6), inset 0 0 0 1px rgba(167,139,250,.14);opacity:0;transform:translateY(8px);transition:opacity .22s ease, transform .22s ease;pointer-events:auto}
+  .tour-bubble[data-show="1"]{opacity:1;transform:translateY(0)}
+  .tour-title{font-weight:800;letter-spacing:.2px;color:#c7b7ff;margin:0 0 6px 0}
+  .tour-body{font-size:.95rem;color:#cad0ff;line-height:1.45}
+  .tour-ctr{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  .tour-btn{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#eaeaf6;
+    padding:8px 12px;border-radius:10px;cursor:pointer}
+  .tour-btn.primary{background:linear-gradient(180deg,#a78bfa,#8b5cf6);color:#170e2f;border-color:transparent;font-weight:800}
+  .tour-step{font-size:.78rem;color:#9aa0d6;margin-top:6px}
+  .tour-svg{position:absolute;inset:0;pointer-events:none}
+  .tour-arrow{stroke:url(#tourGrad);stroke-width:2.2}
+  .tour-arrow-head{fill:#a78bfa}
 </style>
 </head>
 <body>
-<header class='appbar'>
-  <div class='brand'><div class='hello'>Hello!</div><div class='subtle'>LinkUp · Handshake Demo v7</div></div>
-  <div style='display:flex;align-items:center;gap:12px;flex-wrap:wrap'>
-    <div style='display:flex;align-items:center;gap:8px'>
-      <label class='subtle'>Scenario:</label><select id='scenarioSel' class='select'></select>
-      <span id='scenarioAvail' class='subtle'>· —</span>
+
+<!-- Launcher buttons (you can remove if you want only auto-start) -->
+<div class="tour-launch">
+  <button id="tour-owner-btn">Owner tour</button>
+  <button id="tour-viewer-btn">Viewer tour</button>
+</div>
+
+<!-- ====== PAGE WRAPPER ====== -->
+<div class="max-w-6xl mx-auto px-5 pt-8 pb-16">
+
+  <!-- Top bar / header -->
+  <div class="glass rounded-2xl p-4 md:p-5 mb-6 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(1200px 200px at -10% 0%, rgba(167,139,250,.12), transparent 60%);"></div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <div class="text-2xl font-extrabold tracking-tight">Hello! <span class="text-violet-300">LinkUp</span> <span class="text-sm font-semibold text-violet-200/80 align-top">v7</span></div>
+
+      <!-- Scenario -->
+      <div id="scenarioSelect" class="chip rounded-xl px-3 py-1.5 ml-2 flex items-center gap-2">
+        <span class="text-sm">Scenario:</span>
+        <select class="bg-transparent outline-none text-[.9rem]">
+          <option> D • Fresh new (Owner away)</option>
+          <option> C • Fresh new (Owner available)</option>
+          <option> B • Follow-up needed</option>
+          <option> A • Accepted → Scheduling</option>
+        </select>
+      </div>
+
+      <!-- Availability -->
+      <div id="availabilityToggle" class="ml-auto flex items-center gap-2">
+        <span class="small">Owner availability:</span>
+        <button data-state="available" class="chip pill px-3 py-1 sel" onclick="setAvail('available')">Available</button>
+        <button data-state="away" class="chip pill px-3 py-1" onclick="setAvail('away')">Away</button>
+      </div>
+
+      <!-- View toggle -->
+      <div id="viewToggle" class="flex items-center gap-1 ml-3">
+        <span class="small">View as:</span>
+        <button id="btn-viewer" class="chip pill px-3 py-1" onclick="setView('viewer')">Viewer</button>
+        <button id="btn-owner" class="chip pill px-3 py-1 sel" onclick="setView('owner')">Owner</button>
+      </div>
     </div>
-    <div class='role'><span class='subtle'>View as:</span><button class='chip' id='asViewer'>Viewer</button><button class='chip active' id='asOwner'>Owner</button></div>
-    <div class='role'><span class='subtle'>Owner availability:</span><button class='chip active' id='availOn'>Available</button><button class='chip' id='availOff'>Away</button></div>
-    <div id='awayCtl' class='small'>
-      <span>Away until:</span>
-      <input type='datetime-local' id='awayUntil'>
-      <span class='preset' data-days='1'>+1d</span>
-      <span class='preset' data-days='3'>+3d</span>
-      <span class='preset' data-days='7'>+7d</span>
+
+    <!-- Dynamic scenario hint -->
+    <div id="scenarioHint" class="mt-3 small">Scenario: <span class="hint">Fresh new</span> • <span id="availLabel" class="hint">Owner available</span></div>
+  </div>
+
+  <!-- People row -->
+  <div id="profilesRow" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+    <div class="glass rounded-2xl p-4 flex items-center gap-4">
+      <img class="avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop" alt="Owner">
+      <div>
+        <div class="font-semibold text-lg">Alex Winterton</div>
+        <div class="small">Signature Owner</div>
+      </div>
+      <span id="ownerBusyBadge" class="tag ml-auto hidden">Away</span>
+    </div>
+    <div class="glass rounded-2xl p-4 flex items-center gap-4">
+      <img class="avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=256&auto=format&fit=crop" alt="Viewer">
+      <div>
+        <div class="font-semibold text-lg">Jordan Lee</div>
+        <div class="small">Signature Viewer</div>
+      </div>
     </div>
   </div>
-</header>
 
-<main class='container' id='app'>
-  <section class='identity'>
-    <div class='pair'>
-      <div class='cardlet' id='ownerCard'>
-        <div class='avatar'><img id='ownerAvatar' alt='owner'/></div>
-        <div><div class='name' id='ownerName'>—</div><div class='roleTxt'>Signature Owner</div></div>
-        <span class='badgeAway' id='awayBadge' style='display:none'>Away</span>
-      </div>
-      <div class='between'>↔</div>
-      <div class='cardlet'><div class='avatar'><img id='viewerAvatar' alt='viewer'/></div><div><div class='name' id='viewerName'>—</div><div class='roleTxt'>Signature Viewer</div></div></div>
-    </div>
-  </section>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-  <section class='grid'>
-    <article class='panel'>
-      <div class='intentWrap'>
-        <div class='intentHdr'>Viewer Request</div>
-        <div class='intent'><span class='pill' id='intentPill'>—</span><div><div class='pintent' id='intentText'>Viewer’s request / reason</div></div></div>
-      </div>
+    <!-- Left column -->
+    <div class="space-y-6">
 
-      <div class='summaryHead'>
-        <div><div class='title'>Compatibility</div><div class='subtle' id='confidenceLine'>Confidence —</div></div>
-        <div style='min-width:180px;text-align:right' id='scoreBox'><div class='subtle' style='margin-bottom:6px'>Score</div><div class='meter'><div class='bar' id='scoreBar'></div></div><div style='margin-top:6px;font-weight:800;color:#d7ccff' id='scoreText'>—/100</div></div>
-      </div>
-      <ul class='bullets' id='bullets'><li>Loading…</li></ul>
-    </article>
-
-    <aside class='panel'>
-      <div class='title' style='margin-bottom:10px'>Next step</div>
-      <div class='actions' id='actions'></div>
-
-      <div class='confirmBox' id='confirmBox' style='display:none'>
-        <div class='confirmTitle' id='confirmTitle'>Confirm action</div>
-        <div class='confirmHelp' id='confirmHelp'>—</div>
-
-        <div id='declineEdit' style='display:none'>
-          <div class='field'><label class='label'>Message to Viewer</label>
-            <textarea id='declineMsg' class='textarea' placeholder='Thanks for reaching out. This isn’t a fit right now.'></textarea>
-          </div>
-          <div class='label' style='margin-top:8px'>Preview (exactly what the viewer will see):</div>
-          <div class='confirmBox' style='margin-top:6px'><em id='declinePreview'>“Thanks for reaching out. This isn’t a fit right now.”</em></div>
+      <!-- Viewer Request -->
+      <div id="viewerRequest" class="glass rounded-2xl p-4">
+        <div class="card-title text-sm mb-2">Viewer Request</div>
+        <div class="flex items-center gap-3">
+          <span class="pill chip px-3 py-1 text-sm">Schedule a Call</span>
+          <div class="small">Travel app MVP—need fast UI polish + design tokens</div>
         </div>
-
-        <div class='confirmRow'><button class='btn' id='btnBack'>Back</button><button class='btn primary' id='btnConfirm'>Confirm</button></div>
       </div>
 
-      <div class='inline' id='needsForm' style='display:none'>
-        <div class='field'><label class='label' for='linkedin'>LinkedIn URL</label><input class='input' id='linkedin' placeholder='https://linkedin.com/in/you'></div>
-        <div class='field'><label class='label' for='zip'>Zip</label><input class='input' id='zip' placeholder='11238'></div>
-        <div class='confirmRow'><button class='btn' id='btnBackForm'>Back</button><button class='btn primary' id='submitNeeds'>Submit details</button></div>
+      <!-- Compatibility -->
+      <div id="compatibilityCard" class="glass rounded-2xl p-4">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="card-title text-sm mb-1">Compatibility</div>
+            <div class="small">Confidence: <span id="confText">High</span></div>
+          </div>
+          <div class="text-right">
+            <div class="small mb-1">Score</div>
+            <div class="flex items-center gap-2 min-w-[120px]">
+              <div class="score-bar w-28 rounded-full overflow-hidden">
+                <div id="scoreFill" style="width:78%;height:8px;background:transparent"></div>
+              </div>
+              <div class="text-xl font-extrabold">78<span class="text-sm opacity-70">/100</span></div>
+            </div>
+          </div>
+        </div>
+        <ul class="mt-3 space-y-2 text-[.95rem]">
+          <li>• Mobile UX focus match</li>
+          <li>• 6 miles apart</li>
+          <li>• Clear project intent</li>
+        </ul>
       </div>
 
-      <div class='note' style='margin-top:10px' id='actionNote'>—</div>
-    </aside>
-  </section>
-
-  <section class='panel phaseWrap' style='margin-top:14px'>
-    <div class='phaseGrid'>
-      <div class='phase'><div class='dot' id='tlSubmitted'></div><div class='tlabel'>Submitted</div></div>
-      <div class='phase'><div class='dot' id='tlViewed'></div><div class='tlabel'>Owner viewed</div></div>
-      <div class='phase'><div class='dot' id='tlActed'></div><div class='tlabel'>Owner acted</div></div>
-      <div class='phase'><div class='dot' id='tlScheduled'></div><div class='tlabel'>Scheduled/Closed</div></div>
     </div>
-    <div class='progressWrap'><div class='progress'><div class='pbar' id='pbar'></div></div></div>
-    <div class='expiry' id='expiryText'>Expires in —</div>
-  </section>
 
-  <section class='footer'>
-    <button class='btn' id='btnVCard'>Download vCard</button>
-    <button class='btn' id='btnICS'>Add to Calendar</button>
-    <a class='aLite' id='shareLink' href='#' target='_blank'>Open public LinkUp page</a>
-    <span class='subtle' style='margin-left:auto'>ID: <code id='hid'>—</code></span>
-  </section>
-</main>
+    <!-- Right column -->
+    <div class="space-y-6">
+
+      <!-- Next Step -->
+      <div id="nextStepCard" class="glass rounded-2xl p-4">
+        <div class="card-title text-sm mb-2">Next step</div>
+        <div class="space-y-3">
+          <button class="btn-primary w-full rounded-xl py-3" onclick="confirmAction('accept')">Accept &amp; Send Link</button>
+          <button class="btn w-full rounded-xl py-3" onclick="confirmAction('needs')">Needs Info</button>
+          <button class="btn w-full rounded-xl py-3" onclick="confirmAction('nope')">Not a Fit</button>
+        </div>
+        <div class="small mt-3">Choose one action to keep this LinkUp fresh.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Timeline + expiry -->
+  <div id="progressSection" class="glass rounded-2xl p-4 mt-6">
+    <div class="flex items-center gap-6 flex-wrap">
+      <div><span class="dot active"></span>Submitted</div>
+      <div><span class="dot" id="dot-viewed"></span>Owner viewed</div>
+      <div><span class="dot" id="dot-acted"></span>Owner acted</div>
+      <div><span class="dot" id="dot-closed"></span>Scheduled/Closed</div>
+    </div>
+    <div class="progress-wrap w-full mt-3">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div id="expiry" class="small mt-2">Expires in 6d 23h 43m</div>
+  </div>
+
+  <!-- Footer actions -->
+  <div id="footerActions" class="flex flex-wrap gap-3 mt-6">
+    <button class="btn rounded-xl px-4 py-2">Download vCard</button>
+    <button class="btn rounded-xl px-4 py-2">Add to Calendar</button>
+    <a class="btn rounded-xl px-4 py-2" href="#" onclick="alert('Opening public LinkUp page…');return false;">Open public LinkUp page</a>
+    <div class="small opacity-70 ml-auto">ID: —</div>
+  </div>
+
+</div>
+
+<!-- Simple confirmation modal -->
+<div id="confirmModal" class="fixed inset-0 hidden items-center justify-center z-40">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeConfirm()"></div>
+  <div class="glass rounded-2xl p-5 w-[min(520px,92vw)] relative">
+    <button class="absolute right-3 top-3 chip rounded-lg px-2 py-1" onclick="closeConfirm()">✕</button>
+    <div class="card-title mb-1">Confirm action</div>
+    <div id="confirmText" class="small mb-4"></div>
+    <div class="flex gap-3 justify-end">
+      <button class="btn rounded-xl px-4 py-2" onclick="closeConfirm()">Back</button>
+      <button class="btn-primary rounded-xl px-4 py-2" onclick="applyAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== GUIDED TOUR LAYER (integrated) ===================== -->
+<div id="tour-overlay" class="tour-overlay" aria-hidden="true">
+  <div class="tour-dim"></div>
+  <svg class="tour-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="tourGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#22d3ee" stop-opacity=".85"/>
+        <stop offset="100%" stop-color="#a78bfa" stop-opacity=".95"/>
+      </linearGradient>
+      <marker id="tourHead" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto">
+        <polygon class="tour-arrow-head" points="0 0, 7 3.5, 0 7"></polygon>
+      </marker>
+    </defs>
+    <line id="tour-line" class="tour-arrow" x1="0" y1="0" x2="0" y2="0" marker-end="url(#tourHead)"></line>
+  </svg>
+  <div id="tour-spot" class="tour-spot"></div>
+  <div id="tour-bubble" class="tour-bubble" role="dialog" aria-live="polite">
+    <h4 id="tour-title" class="tour-title"></h4>
+    <div id="tour-body" class="tour-body"></div>
+    <div class="tour-step" id="tour-step-indicator"></div>
+    <div class="tour-ctr">
+      <button id="tour-prev" class="tour-btn">Back</button>
+      <button id="tour-skip" class="tour-btn">Skip</button>
+      <button id="tour-next" class="tour-btn primary">Next</button>
+    </div>
+  </div>
+</div>
+<!-- ======================================================================== -->
 
 <script>
-const nowISO = (ms=0)=> new Date(Date.now()+ms).toISOString();
+/* ===== Demo logic (view + availability + timeline) ===== */
+let CURRENT_VIEW = 'owner';    // 'owner' | 'viewer'
+let AVAIL = 'available';       // 'available' | 'away'
+let PCT = 25;                  // progress percent
 
-function avatarDataURI(name){
-  const initials = (name||'?').split(' ').map(s=>s[0]||'').slice(0,2).join('').toUpperCase();
-  const hue = Math.abs([...name].reduce((a,c)=>a+c.charCodeAt(0),0)) % 360;
-  const bg = `hsl(${hue},70%,22%)`; const fg = `hsl(${(hue+40)%360},75%,56%)`;
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><rect width='100%' height='100%' rx='128' ry='128' fill='${bg}'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='100' fill='${fg}' font-weight='700'>${initials}</text></svg>`;
-  return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+function setView(v){
+  CURRENT_VIEW = v;
+  document.getElementById('btn-owner').classList.toggle('sel', v==='owner');
+  document.getElementById('btn-viewer').classList.toggle('sel', v==='viewer');
+  document.getElementById('scenarioHint').querySelector('.hint').textContent =
+    v==='owner' ? 'Owner console view' : 'Viewer experience';
 }
 
-const P = idx => `https://i.pravatar.cc/256?img=${idx}`;
+function setAvail(a){
+  AVAIL = a;
+  const availBtns = document.querySelectorAll('#availabilityToggle .pill');
+  availBtns.forEach(b => b.classList.toggle('sel', b.dataset.state===a));
+  document.getElementById('availLabel').textContent = a==='away' ? 'Owner away' : 'Owner available';
+  document.getElementById('ownerBusyBadge').classList.toggle('hidden', a!=='away');
+}
 
-const ACTION_LABEL = { schedule_call:'Schedule a Call', send_deck:'Send Portfolio', send_resume:'Send Resume', request_pricing:'Request Pricing', meet_coffee:'Meet for Coffee' };
+function confirmAction(type){
+  const map = {
+    accept: `<b>Accept & Send Link</b><br/>We’ll generate a scheduling/join link and notify the viewer.`,
+    needs : `<b>Needs Info</b><br/>We’ll ask the viewer to clarify scope or provide materials.`,
+    nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>“Thanks for reaching out. This isn’t a fit right now, but wishing you success.”</em>`
+  };
+  window.__pendingAction = type;
+  document.getElementById('confirmText').innerHTML = map[type] || '';
+  document.getElementById('confirmModal').classList.remove('hidden');
+  document.getElementById('confirmModal').classList.add('flex');
+}
+function closeConfirm(){
+  document.getElementById('confirmModal').classList.add('hidden');
+  document.getElementById('confirmModal').classList.remove('flex');
+}
+function applyAction(){
+  closeConfirm();
+  // advance timeline for demo
+  if(PCT < 60){ PCT = 60; document.getElementById('dot-viewed').classList.add('active'); }
+  else { PCT = 100; document.getElementById('dot-acted').classList.add('active'); document.getElementById('dot-closed').classList.add('active'); }
+  document.getElementById('progressBar').style.width = PCT + '%';
+  alert('Action applied: ' + window.__pendingAction);
+}
 
-const scenarios = {
-  "A · High fit (Accepted)": {
-    handshake_id: "H-A-001", role:"owner", status:"accepted",
-    created_at: nowISO(-15*60*1000), action_due_at: nowISO(2*60*60*1000), expires_at: nowISO(6*24*60*60*1000),
-    owner: { name:"Priya Shah", avatar: P(12), booking_url:"https://calendly.com/hello/15m", availability:"available" },
-    viewer:{ name:"Diego Park", avatar: P(47), zip:"94107", action_choice:"schedule_call", one_liner:"Launching a wellness app—need UX audit + 15m intro" },
-    compatibility:{ score:91, confidence:"High", bullets:["Strong overlap in product UX","Same city (4 mi)","Portfolio provided"] }
-  },
-  "B · Medium (Needs info)": {
-    handshake_id: "H-B-002", role:"owner", status:"needs_info",
-    created_at: nowISO(-55*60*1000), action_due_at: nowISO(30*60*1000), expires_at: nowISO(5*24*60*60*1000),
-    owner: { name:"Mateo Alvarez", avatar: P(7), booking_url:"https://calendly.com/hello/30m", availability:"available" },
-    viewer:{ name:"Riley Chen", avatar: P(21), zip:"", action_choice:"send_deck", one_liner:"Brand deck for fintech accelerator application" },
-    compatibility:{ score:62, confidence:"Medium", bullets:["Relevant industry tags","Missing LinkedIn / Zip","Deck link provided"] }
-  },
-  "C · Low fit (Not a fit)": {
-    handshake_id: "H-C-003", role:"owner", status:"not_a_fit",
-    created_at: nowISO(-3*60*60*1000), action_due_at: nowISO(-60*60*1000), expires_at: nowISO(6*24*60*60*1000),
-    owner: { name:"Ari Jones", avatar: P(2), booking_url:"https://calendly.com/hello/15m", availability:"available" },
-    viewer:{ name:"Sam Brooks", avatar: P(32), zip:"73301", action_choice:"request_pricing", one_liner:"Looking for bulk photo retouching (1000 imgs/wk)" },
-    compatibility:{ score:34, confidence:"High", bullets:["Outside listed services","Different region","No portfolio link"] },
-    decline_message: "Thanks for reaching out. This isn’t a fit right now."
-  },
-  "D · Fresh new (Owner away)": {
-    handshake_id: "H-D-004", role:"owner", status:"new",
-    created_at: nowISO(-5*60*1000), action_due_at: nowISO(47*60*60*1000), expires_at: nowISO(7*24*60*60*1000),
-    owner: { name:"Alex Winterton", avatar: P(5), booking_url:"https://calendly.com/hello/intro", availability:"away", away_until: nowISO(3*24*60*60*1000) },
-    viewer:{ name:"Jordan Lee", avatar: P(18), zip:"11238", action_choice:"schedule_call", one_liner:"Travel app MVP—need fast UI polish + design tokens" },
-    compatibility:{ score:78, confidence:"High", bullets:["Mobile UX focus match","6 miles apart","Clear project intent"] }
-  },
-  "E · Expired (Closed)": {
-    handshake_id: "H-E-005", role:"owner", status:"closed",
-    created_at: nowISO(-9*24*60*60*1000), action_due_at: nowISO(-7*24*60*60*1000), expires_at: nowISO(-2*24*60*60*1000),
-    owner: { name:"Nina Okoro", avatar: P(28), booking_url:"https://calendly.com/hello/coffee", availability:"available" },
-    viewer:{ name:"Ben Ortiz", avatar: P(49), zip:"30318", action_choice:"meet_coffee", one_liner:"In town next week—coffee to chat collab?" },
-    compatibility:{ score:70, confidence:"High", bullets:["Local coffee spots nearby","Matching availability windows","Clear next step"] }
+/* Expiry countdown (static seed: 6d 23h 43m) */
+(function(){
+  const start = Date.now();
+  const ttl = 6*24*60*60*1000 + 23*60*60*1000 + 43*60*1000;
+  function tick(){
+    const remain = Math.max(0, ttl - (Date.now()-start));
+    const d = Math.floor(remain/86400000);
+    const h = Math.floor((remain%86400000)/3600000);
+    const m = Math.floor((remain%3600000)/60000);
+    document.getElementById('expiry').textContent = `Expires in ${d}d ${h}h ${m}m`;
+    requestAnimationFrame(()=>{});
+    setTimeout(tick, 1000*20);
   }
+  tick();
+})();
+
+/* ===== Guided Tour (fully integrated) ===== */
+const TourConfig = {
+  owner: [
+    { sel:'#viewToggle', title:'Pick your view', body:'Toggle between Viewer and Owner to see each side of a LinkUp.', place:'bottom' },
+    { sel:'#availabilityToggle', title:'Availability', body:'Mark yourself Available or Away. Viewers will see this instantly.', place:'bottom',
+      run:()=> setAvail(AVAIL) },
+    { sel:'#scenarioSelect', title:'Scenario presets', body:'Load realistic presets (e.g., “Fresh new • Owner away”).', place:'bottom' },
+    { sel:'#profilesRow', title:'People', body:'Owner ↔ Viewer cards. Tap to see mini-profiles.', place:'top' },
+    { sel:'#viewerRequest', title:'Viewer request', body:'What the visitor asked for + their 1-liner. This drives next steps.', place:'top' },
+    { sel:'#compatibilityCard', title:'Compatibility', body:'AI summary + reasons. Confidence reflects data quality.', place:'left' },
+    { sel:'#nextStepCard', title:'Next step', body:'Choose one: Accept & Send Link, Needs Info, or Not a Fit (preview message before confirming).', place:'left' },
+    { sel:'#progressSection', title:'Timeline + expiry', body:'Single continuous bar + countdown that keeps handshakes fresh.', place:'top' },
+    { sel:'#footerActions', title:'Quick actions', body:'Download vCard, add to calendar, or open the public LinkUp page.', place:'top' },
+    { sel:null, finish:true, title:'All set', body:'That’s the Owner view. Try the Viewer tour to see the other side.' }
+  ],
+  viewer: [
+    { sel:'#viewToggle', title:'Pick your view', body:'Switch to Viewer to experience what visitors see.', place:'bottom',
+      run:()=> setView('viewer') },
+    { sel:'#viewerRequest', title:'Your request', body:'Your selected action (e.g., Schedule a Call) + your 1-liner.', place:'top' },
+    { sel:'#compatibilityCard', title:'Compatibility snapshot', body:'Quick read on mutual fit. High score? Proceed. Low? Maybe pause—especially if owner is Away.', place:'left' },
+    { sel:'#progressSection', title:'Status + deadline', body:'See where things stand and when the LinkUp expires.', place:'top' },
+    { sel:'#nextStepCard', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
+    { sel:'#footerActions', title:'Open public page', body:'Check details or share from the public LinkUp page.', place:'top' },
+    { sel:null, finish:true, title:'That’s it', body:'Short, decisive, no thread fatigue. You’re done.' }
+  ]
 };
 
-let payload = JSON.parse(JSON.stringify(scenarios["D · Fresh new (Owner away)"]));
-const ui = { pending:null };
+// helpers
+function rectAbs(el){ const r = el.getBoundingClientRect(); return {x:r.left+window.scrollX, y:r.top+window.scrollY, w:r.width, h:r.height}; }
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
 
-const $ = s => document.querySelector(s);
-const fmt2 = n => String(n).padStart(2,'0');
+(function(){
+  const overlay = document.getElementById('tour-overlay');
+  const bubble  = document.getElementById('tour-bubble');
+  const spot    = document.getElementById('tour-spot');
+  const line    = document.getElementById('tour-line');
+  const tTitle  = document.getElementById('tour-title');
+  const tBody   = document.getElementById('tour-body');
+  const tStepI  = document.getElementById('tour-step-indicator');
+  const btnPrev = document.getElementById('tour-prev');
+  const btnNext = document.getElementById('tour-next');
+  const btnSkip = document.getElementById('tour-skip');
+  const launchOwner  = document.getElementById('tour-owner-btn');
+  const launchViewer = document.getElementById('tour-viewer-btn');
 
-function setImage(el, url, name){
-  const fallback = avatarDataURI(name||'?');
-  el.onerror = null;
-  el.src = url && url.length ? url : fallback;
-  el.addEventListener('error', ()=>{ el.src = fallback; }, { once:true });
-  el.alt = name;
-}
+  let steps=[], idx=0, running=false, currentMode='owner';
 
-function renderIdentity(){
-  setImage(document.getElementById('ownerAvatar'), payload.owner.avatar, payload.owner.name);
-  setImage(document.getElementById('viewerAvatar'), payload.viewer.avatar, payload.viewer.name);
-  document.getElementById('ownerName').textContent = payload.owner.name || '—';
-  document.getElementById('viewerName').textContent = payload.viewer.name || '—';
-  const away = payload.owner.availability === 'away';
-  document.getElementById('awayBadge').style.display = away ? 'inline-block' : 'none';
-}
-
-function renderIntent(){
-  const lbl = ACTION_LABEL[payload.viewer.action_choice] || payload.viewer.action_choice || '—';
-  document.getElementById('intentPill').textContent = lbl;
-  document.getElementById('intentText').textContent = payload.viewer.one_liner || '—';
-}
-
-function renderSummary(){
-  const isOwner = payload.role==='owner';
-  document.getElementById('confidenceLine').textContent = isOwner ? `Confidence: ${payload.compatibility.confidence}` : 'Quick snapshot';
-  const ul = document.getElementById('bullets'); ul.innerHTML='';
-  (payload.compatibility.bullets||[]).forEach(b=>{ const li=document.createElement('li'); li.textContent=b; ul.appendChild(li); });
-  if((payload.compatibility.bullets||[]).length===0){ const li=document.createElement('li'); li.textContent='—'; ul.appendChild(li); }
-  document.getElementById('scoreBox').style.display = isOwner ? 'block' : 'none';
-  if(isOwner){ document.getElementById('scoreText').textContent = `${payload.compatibility.score||0}/100`; document.getElementById('scoreBar').style.width = (payload.compatibility.score||0)+'%'; }
-}
-
-function setPhases(){
-  const map = { new:0, needs_info:1, accepted:2, not_a_fit:2, scheduled:3, closed:3 };
-  const idx = map[payload.status] ?? 0;
-  ['#tlSubmitted','#tlViewed','#tlActed','#tlScheduled'].forEach((sel,i)=>{ $(sel).classList.toggle('active', i<=idx); });
-  const pct = [0, 33, 66, 100][idx] || 0;
-  document.getElementById('pbar').style.width = pct + '%';
-  const exp = new Date(payload.expires_at);
-  const now = new Date();
-  const untilExp = Math.max(0, Math.round((exp-now)/1000));
-  const expStr = `${Math.floor(untilExp/86400)}d ${fmt2(Math.floor((untilExp%86400)/3600))}h ${fmt2(Math.floor((untilExp%3600)/60))}m`;
-  document.getElementById('expiryText').textContent = `Expires in ${expStr}`;
-}
-
-const COPY = {
-  accept:{ title:'Confirm: Accept & Send Link', help:'Viewer will see “Congrats on the Handshake!” and your booking link opens. You can change status later.' },
-  needs:{ title:'Confirm: Request 2 details', help:'We will ask the viewer for two quick items (LinkedIn, Zip). Score updates when provided.' },
-  decline:{ title:'Confirm: Not a Fit', help:'Review the exact message below. The viewer will receive this wording.' }
-};
-
-function showConfirm(kind){
-  ui.pending = kind;
-  document.getElementById('confirmBox').style.display = 'block';
-  document.getElementById('confirmTitle').textContent = COPY[kind].title;
-  document.getElementById('confirmHelp').textContent = COPY[kind].help;
-  document.getElementById('actions').style.display = 'none';
-  document.getElementById('needsForm').style.display = 'none';
-  document.getElementById('actionNote').textContent = '—';
-  const de = document.getElementById('declineEdit');
-  de.style.display = (kind==='decline') ? 'block' : 'none';
-  if(kind==='decline'){
-    const ta = document.getElementById('declineMsg');
-    ta.value = payload.decline_message || "Thanks for reaching out. This isn’t a fit right now.";
-    document.getElementById('declinePreview').textContent = '“' + ta.value + '”';
-    ta.oninput = () => { document.getElementById('declinePreview').textContent = '“' + ta.value + '”'; };
+  function placeBubble(targetRect, pref){
+    const pad=10, m=12; const bw=bubble.offsetWidth, bh=bubble.offsetHeight;
+    const vw=window.innerWidth, vh=window.innerHeight;
+    let top=0,left=0;
+    if(pref==='top'){ top=targetRect.y - bh - pad; left=targetRect.x + (targetRect.w - bw)/2; }
+    else if(pref==='left'){ top=targetRect.y + (targetRect.h - bh)/2; left=targetRect.x - bw - pad; }
+    else if(pref==='right'){ top=targetRect.y + (targetRect.h - bh)/2; left=targetRect.x + targetRect.w + pad; }
+    else { top=targetRect.y + targetRect.h + pad; left=targetRect.x + (targetRect.w - bw)/2; }
+    left = clamp(left, window.scrollX + m, window.scrollX + vw - bw - m);
+    top  = clamp(top,  window.scrollY + m, window.scrollY + vh - bh - m);
+    bubble.style.left = left + 'px'; bubble.style.top = top + 'px';
   }
-}
-
-function hideConfirm(){
-  ui.pending = null;
-  document.getElementById('confirmBox').style.display = 'none';
-  document.getElementById('actions').style.display = 'grid';
-}
-
-function awayNote(){
-  const ownerAway = payload.owner.availability === 'away';
-  if(!ownerAway) return '';
-  const until = payload.owner.away_until ? new Date(payload.owner.away_until) : null;
-  const untilStr = until ? `${until.toLocaleDateString()} ${until.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}` : 'soon';
-  return `Owner is currently away${until? ' until '+untilStr : ''}. Replies may be delayed.`;
-}
-
-function renderActions(){
-  const wrap = document.getElementById('actions'); wrap.innerHTML=''; document.getElementById('needsForm').style.display='none'; document.getElementById('confirmBox').style.display='none';
-  const isOwner = payload.role==='owner'; const note = document.getElementById('actionNote');
-  const ownerAway = payload.owner.availability === 'away';
-  const btn = (t,c='')=>{ const b=document.createElement('button'); b.className='btn '+c; b.textContent=t; return b; };
-  switch(payload.status){
-    case 'new':
-      if(isOwner){
-        const a=btn('Accept & Send Link','primary'); a.disabled = ownerAway; a.onclick=()=>!ownerAway && showConfirm('accept');
-        const n=btn('Needs Info'); n.onclick=()=>showConfirm('needs');
-        const d=btn('Not a Fit'); d.onclick=()=>showConfirm('decline');
-        wrap.append(a,n,d);
-        note.textContent = ownerAway ? (awayNote() || 'Owner is away.') : 'Choose one action to keep this LinkUp fresh.';
-      } else {
-        const w=btn('Awaiting owner action'); w.disabled=true; wrap.append(w);
-        const extra = awayNote(); note.textContent = extra || 'You will see the next step here once the owner acts.';
-      }
-      break;
-    case 'needs_info':
-      if(isOwner){ const x=document.createElement('div'); x.className='note'; x.textContent='Requesting two quick details from the viewer…'; wrap.append(x); note.textContent='You can accept once details arrive.'; }
-      else { const add=btn('Add 2 details','primary'); add.onclick=()=>{document.getElementById('needsForm').style.display='grid'; wrap.style.display='none';}; wrap.append(add); note.textContent='Add LinkedIn + Zip to improve your snapshot.'; }
-      break;
-    case 'accepted':
-      if(isOwner){ const open=btn('Open Booking','primary'); open.onclick=()=>window.open(payload.owner.booking_url,'_blank'); const rev=btn('Revert to Needs Info'); rev.onclick=()=>{payload.status='needs_info'; renderAll();}; wrap.append(open,rev); note.textContent='Send your booking link and finalize the handshake.'; }
-      else { const book=btn('Book 15 min','primary'); book.onclick=()=>window.open(payload.owner.booking_url,'_blank'); wrap.append(book); note.textContent='Congrats on the Handshake! Pick a time.'; }
-      break;
-    case 'not_a_fit':
-      if(isOwner){ const f=btn('Not a fit (this time)'); f.disabled=true; wrap.append(f); note.textContent = 'Message to Viewer: “' + (payload.decline_message||'') + '”'; }
-      else { const msg=btn('Owner responded'); msg.disabled=true; wrap.append(msg); note.textContent = '“' + (payload.decline_message||'') + '”'; }
-      break;
-    case 'scheduled':
-    case 'closed':
-      const c=btn('Open Calendar','primary'); c.onclick=()=>alert('Open ICS link'); wrap.append(c); note.textContent='This LinkUp is closed.';
-      break;
+  function drawArrow(targetRect){
+    const br = bubble.getBoundingClientRect();
+    const bcx = br.left + br.width/2, bcy = br.top + br.height/2;
+    const tcx = targetRect.x + targetRect.w/2 - window.scrollX;
+    const tcy = targetRect.y + targetRect.h/2 - window.scrollY;
+    const svg = overlay.querySelector('svg.tour-svg');
+    svg.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+    line.setAttribute('x1', bcx); line.setAttribute('y1', bcy);
+    line.setAttribute('x2', tcx); line.setAttribute('y2', tcy);
   }
-
-  document.getElementById('btnBack').onclick = ()=>{ hideConfirm(); };
-  document.getElementById('btnConfirm').onclick = ()=>{
-    if(ui.pending==='accept') payload.status='accepted';
-    if(ui.pending==='needs') payload.status='needs_info';
-    if(ui.pending==='decline'){ payload.status='not_a_fit'; payload.decline_message = document.getElementById('declineMsg').value.trim() || "Thanks for reaching out. This isn’t a fit right now."; }
-    hideConfirm(); renderAll();
-  };
-
-  document.getElementById('submitNeeds').onclick = () => {
-    const li = document.getElementById('linkedin').value.trim();
-    const zip = document.getElementById('zip').value.trim();
-    payload.compatibility.bullets = [ ...(li?['LinkedIn provided']:[]), ...(zip?['Zip: '+zip]:[]), 'Snapshot updating…' ];
-    payload.status='new'; renderSummary(); document.getElementById('needsForm').style.display='none'; wrap.style.display='grid'; renderActions();
-  };
-  document.getElementById('btnBackForm').onclick = () => { document.getElementById('needsForm').style.display='none'; wrap.style.display='grid'; };
-}
-
-function updateScenarioAvailLabel(){
-  const away = payload.owner.availability === 'away';
-  document.getElementById('scenarioAvail').textContent = away ? '· Owner Away' : '· Owner Available';
-  // Show/Hide Away-until control
-  document.getElementById('awayCtl').style.display = away ? 'flex' : 'none';
-  if(away){
-    // Prefill datetime-local (convert ISO to local)
-    if(payload.owner.away_until){
-      const d = new Date(payload.owner.away_until);
-      const tz = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16);
-      document.getElementById('awayUntil').value = tz;
+  function showStep(i){
+    idx=i;
+    const step = steps[idx];
+    if(!step){ end(); return; }
+    if(step.finish){
+      spot.style.display='none'; line.style.opacity=0;
+      tTitle.textContent = step.title||'Done'; tBody.textContent = step.body||'';
+      tStepI.textContent=''; bubble.dataset.show='1';
+      bubble.style.left=(window.scrollX+24)+'px'; bubble.style.top=(window.scrollY+24)+'px';
+      btnPrev.style.display = idx===0?'none':'inline-block';
+      btnNext.textContent='Close'; btnSkip.style.display='none';
+      return;
     }
+    const target = step.sel? document.querySelector(step.sel) : null;
+    if(step.run) try{ step.run(); }catch(e){}
+    if(!target){ showStep(idx+1); return; }
+    target.scrollIntoView({behavior:'smooth', block:'center'}); 
+    setTimeout(()=>{
+      const r = rectAbs(target);
+      spot.style.display='block';
+      spot.style.left=(r.x-6)+'px'; spot.style.top=(r.y-6)+'px';
+      spot.style.width=(r.w+12)+'px'; spot.style.height=(r.h+12)+'px';
+      tTitle.textContent=step.title||''; tBody.textContent=step.body||'';
+      tStepI.textContent=`Step ${idx+1} of ${steps.length}`;
+      placeBubble(r, step.place||'bottom'); drawArrow(r); line.style.opacity=1;
+      bubble.dataset.show='1'; btnPrev.style.display = idx===0?'none':'inline-block';
+      btnNext.textContent='Next'; btnSkip.style.display='inline-block';
+    },180);
   }
-}
-
-function attachAwayControls(){
-  const input = document.getElementById('awayUntil');
-  if(input){
-    input.onchange = ()=>{
-      const val = input.value; // local string
-      if(!val){ payload.owner.away_until = null; return; }
-      const dt = new Date(val);
-      payload.owner.away_until = dt.toISOString();
-      renderAll();
-    };
+  function end(){ running=false; overlay.removeAttribute('data-open'); window.removeEventListener('resize',onRes); window.removeEventListener('scroll',onRes); }
+  function onRes(){ if(running) showStep(idx); }
+  function start(mode){
+    currentMode=mode; steps=(TourConfig[mode]||[]).slice(0);
+    if(!steps.length) return; running=true; idx=0;
+    overlay.setAttribute('data-open','1'); requestAnimationFrame(()=>showStep(0));
+    window.addEventListener('resize',onRes); window.addEventListener('scroll',onRes);
+    if(mode==='owner') setView('owner'); else setView('viewer');
   }
-  document.querySelectorAll('.preset').forEach(el=>{
-    el.onclick = ()=>{
-      const days = parseInt(el.dataset.days||'1',10);
-      const d = new Date();
-      d.setDate(d.getDate()+days);
-      payload.owner.away_until = d.toISOString();
-      renderAll();
-    };
-  });
-}
 
-function renderAll(){ renderIdentity(); renderIntent(); renderSummary(); renderActions(); setPhases(); updateScenarioAvailLabel(); attachAwayControls(); document.getElementById('shareLink').href='#'+payload.handshake_id; }
+  btnNext.addEventListener('click', ()=>{ const s=steps[idx]; if(s && s.finish){ end(); return; } showStep(idx+1); });
+  btnPrev.addEventListener('click', ()=> showStep(Math.max(0, idx-1)));
+  btnSkip.addEventListener('click', end);
+  overlay.querySelector('.tour-dim').addEventListener('click', end);
+  document.getElementById('tour-owner-btn').addEventListener('click', ()=> start('owner'));
+  document.getElementById('tour-viewer-btn').addEventListener('click', ()=> start('viewer'));
 
-const sel = document.getElementById('scenarioSel');
-Object.keys(scenarios).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o); });
-sel.value = "D · Fresh new (Owner away)";
-sel.onchange = () => { payload = JSON.parse(JSON.stringify(scenarios[sel.value])); syncAvailChips(); renderAll(); };
-
-document.getElementById('asViewer').onclick = () => { payload.role='viewer'; document.getElementById('asOwner').classList.remove('active'); document.getElementById('asViewer').classList.add('active'); renderAll(); };
-document.getElementById('asOwner').onclick = () => { payload.role='owner'; document.getElementById('asViewer').classList.remove('active'); document.getElementById('asOwner').classList.add('active'); renderAll(); };
-
-function syncAvailChips(){
-  const on = payload.owner.availability !== 'away';
-  document.getElementById('availOn').classList.toggle('active', on);
-  document.getElementById('availOff').classList.toggle('active', !on);
-}
-document.getElementById('availOn').onclick = () => { payload.owner.availability='available'; syncAvailChips(); renderAll(); };
-document.getElementById('availOff').onclick = () => { payload.owner.availability='away'; if(!payload.owner.away_until){ const d=new Date(); d.setDate(d.getDate()+3); payload.owner.away_until=d.toISOString(); } syncAvailChips(); renderAll(); };
-
-document.getElementById('btnVCard').onclick = ()=> alert('Download vCard (mock)');
-document.getElementById('btnICS').onclick = ()=> alert('Download ICS (mock)');
-
-syncAvailChips(); renderAll(); setInterval(setPhases, 15000);
+  // Expose for external triggers if needed
+  window.LinkUpTour = { start, end };
+  // Auto-offer once after load (remove if not desired)
+  setTimeout(()=>start('owner'), 1200);
+})();
 </script>
 </body>
 </html>
