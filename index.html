@@ -302,33 +302,59 @@ document.addEventListener('DOMContentLoaded', function(){
   // ---------- UI Updaters ----------
   function setView(v){
     CURRENT_VIEW = v;
-    $('#btn-owner').classList.toggle('sel', v==='owner');
-    $('#btn-viewer').classList.toggle('sel', v==='viewer');
+    console.log('Setting view to:', v);
+    
+    // Update view toggle buttons
+    const btnOwner = $('#btn-owner');
+    const btnViewer = $('#btn-viewer');
+    if (btnOwner) btnOwner.classList.toggle('sel', v==='owner');
+    if (btnViewer) btnViewer.classList.toggle('sel', v==='viewer');
     
     // Update view-specific component visibility
+    const nextStepOwner = $('#nextStepCardOwner');
+    const nextStepViewer = $('#nextStepCardViewer');
+    const compatScore = $('#compatScoreWrap');
+    const availToggle = $('#availabilityToggle');
+    
     if (v === 'owner') {
       // Owner view: show owner controls, hide viewer status
-      $('#nextStepCardOwner').classList.remove('hidden');
-      $('#nextStepCardViewer').classList.add('hidden');
-      $('#compatScoreWrap').classList.remove('hidden');
-      $('#availabilityToggle').classList.remove('hidden');
+      if (nextStepOwner) nextStepOwner.classList.remove('hidden');
+      if (nextStepViewer) nextStepViewer.classList.add('hidden');
+      if (compatScore) compatScore.classList.remove('hidden');
+      if (availToggle) availToggle.classList.remove('hidden');
     } else {
       // Viewer view: hide owner controls, show viewer status, hide score area only
-      $('#nextStepCardOwner').classList.add('hidden');
-      $('#nextStepCardViewer').classList.remove('hidden');
-      $('#compatScoreWrap').classList.add('hidden');
-      $('#availabilityToggle').classList.add('hidden');
+      if (nextStepOwner) nextStepOwner.classList.add('hidden');
+      if (nextStepViewer) nextStepViewer.classList.remove('hidden');
+      if (compatScore) compatScore.classList.add('hidden');
+      if (availToggle) availToggle.classList.add('hidden');
     }
     
     // Update viewer status display
     updateViewerStatus();
-    $('#scenarioHint').querySelector('.hint').textContent = v==='owner' ? 'Owner console view' : 'Viewer experience';
+    
+    // Update scenario hint
+    const scenarioHint = $('#scenarioHint');
+    const hintSpan = scenarioHint ? scenarioHint.querySelector('.hint') : null;
+    if (hintSpan) hintSpan.textContent = v==='owner' ? 'Owner console view' : 'Viewer experience';
   }
   function setAvail(a){
     AVAIL = a;
-    document.querySelectorAll('#availabilityToggle .pill').forEach(b => b.classList.toggle('sel', b.dataset.state===a));
-    $('#availLabel').textContent = a==='away' ? 'Owner away' : 'Owner available';
-    $('#ownerBusyBadge').classList.toggle('hidden', a!=='away');
+    console.log('Setting availability to:', a);
+    
+    // Update availability buttons
+    document.querySelectorAll('#availabilityToggle button[data-state]').forEach(b => {
+      b.classList.toggle('sel', b.dataset.state===a);
+    });
+    
+    // Update availability label
+    const availLabel = $('#availLabel');
+    if (availLabel) availLabel.textContent = a==='away' ? 'Owner away' : 'Owner available';
+    
+    // Update away badge
+    const busyBadge = $('#ownerBusyBadge');
+    if (busyBadge) busyBadge.classList.toggle('hidden', a!=='away');
+    
     updateViewerStatus();
   }
   
@@ -353,23 +379,36 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   function setScore(n){
     SCORE = clamp(parseInt(n||0,10), 0, 100);
-    $('#scoreNum').textContent = SCORE;
-    $('#scoreFill').style.width = SCORE + '%';
-    $('#confText').textContent = SCORE >= 75 ? 'High' : SCORE >= 60 ? 'Medium' : 'Low';
+    const scoreNum = $('#scoreNum');
+    const scoreFill = $('#scoreFill');
+    const confText = $('#confText');
+    
+    if (scoreNum) scoreNum.textContent = SCORE;
+    if (scoreFill) scoreFill.style.width = SCORE + '%';
+    if (confText) confText.textContent = SCORE >= 75 ? 'High' : SCORE >= 60 ? 'Medium' : 'Low';
   }
   function setStep(n){
     STEP = clamp(parseInt(n||1,10), 1, 4);
-    $('#dot-submitted').classList.toggle('active', STEP >= 1);
-    $('#dot-viewed').classList.toggle('active',   STEP >= 2);
-    $('#dot-acted').classList.toggle('active',    STEP >= 3);
-    $('#dot-closed').classList.toggle('active',   STEP >= 4);
+    
+    const dotSubmitted = $('#dot-submitted');
+    const dotViewed = $('#dot-viewed');
+    const dotActed = $('#dot-acted');
+    const dotClosed = $('#dot-closed');
+    const phaseFill = $('#phaseFill');
+    
+    if (dotSubmitted) dotSubmitted.classList.toggle('active', STEP >= 1);
+    if (dotViewed) dotViewed.classList.toggle('active', STEP >= 2);
+    if (dotActed) dotActed.classList.toggle('active', STEP >= 3);
+    if (dotClosed) dotClosed.classList.toggle('active', STEP >= 4);
+    
     // Fill to the END of the completed phase: 1→25%, 2→50%, 3→75%, 4→100%
     const pct = (STEP/4) * 100;
-    $('#phaseFill').style.width = pct + '%';
+    if (phaseFill) phaseFill.style.width = pct + '%';
   }
 
   // ---------- Scenario presets (demo only) ----------
   function applyScenario(code){
+    console.log('Applying scenario:', code);
     switch(code){
       case 'D-away':       setAvail('away');      setStep(1); setScore(62); break;
       case 'C-available':  setAvail('available'); setStep(1); setScore(78); break;
@@ -377,28 +416,41 @@ document.addEventListener('DOMContentLoaded', function(){
       case 'A-accepted':   setAvail('available'); setStep(3); setScore(84); break;
     }
     const label = code.includes('away') ? 'Owner away' : 'Owner available';
-    $('#scenarioHint').innerHTML = `Scenario: <span class="hint">${code.split('-')[0]} preset</span> • <span class="hint">${label}</span>`;
+    const scenarioHint = $('#scenarioHint');
+    if (scenarioHint) {
+      scenarioHint.innerHTML = `Scenario: <span class="hint">${code.split('-')[0]} preset</span> • <span class="hint">${label}</span>`;
+    }
     updateViewerStatus(); // Sync viewer status when scenario changes
   }
 
   // ---------- Confirm modal ----------
-  const confirmModal = $('#confirmModal');
   function openConfirm(type){
+    console.log('Opening confirm modal for:', type);
     const map = {
-      accept: `<b>Accept &amp; Send Link</b><br/>We’ll generate a scheduling/join link and notify the viewer.`,
-      needs : `<b>Needs Info</b><br/>We’ll ask the viewer to clarify scope or provide materials.`,
-      nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>“Thanks for reaching out. This isn’t a fit right now, but wishing you success.”</em>`
+      accept: `<b>Accept &amp; Send Link</b><br/>We'll generate a scheduling/join link and notify the viewer.`,
+      needs : `<b>Needs Info</b><br/>We'll ask the viewer to clarify scope or provide materials.`,
+      nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>"Thanks for reaching out. This isn't a fit right now, but wishing you success."</em>`
     };
     PENDING_ACTION = type;
-    $('#confirmText').innerHTML = map[type] || '';
-    confirmModal.classList.remove('hidden');
-    confirmModal.classList.add('flex');
+    
+    const confirmText = $('#confirmText');
+    const confirmModal = $('#confirmModal');
+    
+    if (confirmText) confirmText.innerHTML = map[type] || '';
+    if (confirmModal) {
+      confirmModal.classList.remove('hidden');
+      confirmModal.classList.add('flex');
+    }
   }
   function closeConfirm(){
-    confirmModal.classList.add('hidden');
-    confirmModal.classList.remove('flex');
+    const confirmModal = $('#confirmModal');
+    if (confirmModal) {
+      confirmModal.classList.add('hidden');
+      confirmModal.classList.remove('flex');
+    }
   }
   function applyAction(){
+    console.log('Applying action:', PENDING_ACTION);
     closeConfirm();
     if (STEP < 3) setStep(3); else setStep(4);
     alert('Action applied: ' + PENDING_ACTION);
@@ -414,32 +466,92 @@ document.addEventListener('DOMContentLoaded', function(){
       const d = Math.floor(remain/86400000);
       const h = Math.floor((remain%86400000)/3600000);
       const m = Math.floor((remain%3600000)/60000);
-      $('#expiry').textContent = `Expires in ${d}d ${h}h ${m}m`;
+      const expiry = $('#expiry');
+      if (expiry) expiry.textContent = `Expires in ${d}d ${h}h ${m}m`;
       setTimeout(tick, 20000);
     }
     tick();
   })();
 
   // ---------- Wire basic controls ----------
-  $('#btn-owner').addEventListener('click', ()=> setView('owner'));
-  $('#btn-viewer').addEventListener('click', ()=> setView('viewer'));
-  // availability buttons
-  document.querySelectorAll('#availabilityToggle .pill').forEach(btn=>{
-    btn.addEventListener('click', ()=> setAvail(btn.dataset.state));
+  // Debug: Check if elements exist before adding listeners
+  console.log('Setting up event listeners...');
+  
+  const btnOwner = $('#btn-owner');
+  const btnViewer = $('#btn-viewer');
+  console.log('View buttons found:', !!btnOwner, !!btnViewer);
+  
+  if (btnOwner) btnOwner.addEventListener('click', ()=> {
+    console.log('Owner button clicked');
+    setView('owner');
   });
+  if (btnViewer) btnViewer.addEventListener('click', ()=> {
+    console.log('Viewer button clicked');
+    setView('viewer');
+  });
+  
+  // availability buttons
+  const availButtons = document.querySelectorAll('#availabilityToggle button[data-state]');
+  console.log('Availability buttons found:', availButtons.length);
+  availButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      console.log('Availability button clicked:', btn.dataset.state);
+      setAvail(btn.dataset.state);
+    });
+  });
+  
   // scenario
-  $('#scenarioPicker').addEventListener('change', e=> applyScenario(e.target.value));
+  const scenarioPicker = $('#scenarioPicker');
+  if (scenarioPicker) {
+    scenarioPicker.addEventListener('change', e=> {
+      console.log('Scenario changed:', e.target.value);
+      applyScenario(e.target.value);
+    });
+  }
+  
   // next-step actions
-  $('#btn-accept').addEventListener('click', ()=> openConfirm('accept'));
-  $('#btn-needs').addEventListener('click',  ()=> openConfirm('needs'));
-  $('#btn-nope').addEventListener('click',   ()=> openConfirm('nope'));
+  const btnAccept = $('#btn-accept');
+  const btnNeeds = $('#btn-needs');
+  const btnNope = $('#btn-nope');
+  console.log('Action buttons found:', !!btnAccept, !!btnNeeds, !!btnNope);
+  
+  if (btnAccept) btnAccept.addEventListener('click', ()=> {
+    console.log('Accept button clicked');
+    openConfirm('accept');
+  });
+  if (btnNeeds) btnNeeds.addEventListener('click', ()=> {
+    console.log('Needs info button clicked');
+    openConfirm('needs');
+  });
+  if (btnNope) btnNope.addEventListener('click', ()=> {
+    console.log('Not a fit button clicked');
+    openConfirm('nope');
+  });
+  
   // confirm modal buttons
-  $('#confirmApply').addEventListener('click', applyAction);
-  $('#confirmBack').addEventListener('click', closeConfirm);
-  $('#confirmClose').addEventListener('click', closeConfirm);
-  $('#confirmBackdrop').addEventListener('click', closeConfirm);
+  const confirmApply = $('#confirmApply');
+  const confirmBack = $('#confirmBack');
+  const confirmClose = $('#confirmClose');
+  const confirmBackdrop = $('#confirmBackdrop');
+  
+  if (confirmApply) confirmApply.addEventListener('click', applyAction);
+  if (confirmBack) confirmBack.addEventListener('click', closeConfirm);
+  if (confirmClose) confirmClose.addEventListener('click', closeConfirm);
+  if (confirmBackdrop) confirmBackdrop.addEventListener('click', closeConfirm);
 
   // ---------- Initial state ----------
+  console.log('Initializing state...');
+  
+  // Debug: Check critical elements exist
+  const criticalElements = [
+    'btn-owner', 'btn-viewer', 'nextStepCardOwner', 'nextStepCardViewer', 
+    'compatScoreWrap', 'availabilityToggle', 'viewerOwnerStatus'
+  ];
+  criticalElements.forEach(id => {
+    const el = $('#' + id);
+    console.log(`Element #${id}:`, !!el);
+  });
+  
   setView('owner'); setAvail('available'); setStep(1); setScore(78);
   updateViewerStatus(); // Ensure viewer status is initialized
 
