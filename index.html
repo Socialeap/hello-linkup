@@ -81,6 +81,9 @@
   .tour-step{font-size:.78rem;color:#9aa0d6;margin-top:6px}
   .tour-arrow{stroke:url(#tourGrad);stroke-width:2.2}
   .tour-arrow-head{fill:#a78bfa}
+  
+  /* View-specific visibility */
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -159,7 +162,7 @@
         <div class="flex items-center gap-3 mb-2">
           <span id="actionPill" class="pill chip px-3 py-1 text-sm">Action selected: Schedule a Call</span>
         </div>
-        <div class="small opacity-90">“<span id="oneLiner">Travel app MVP — need fast UI polish + design tokens</span>”</div>
+        <div class="small opacity-90">"<span id="oneLiner">Travel app MVP — need fast UI polish + design tokens</span>"</div>
       </div>
 
       <!-- Compatibility -->
@@ -169,7 +172,7 @@
             <div class="card-title text-sm mb-1">Compatibility</div>
             <div class="small">Confidence: <span id="confText">High</span></div>
           </div>
-          <div class="text-right">
+          <div id="compatScoreWrap" class="text-right">
             <div class="small mb-1">Score</div>
             <div class="score-wrap">
               <div class="score-track"><div id="scoreFill" class="score-fill"></div></div>
@@ -189,8 +192,8 @@
     <!-- Right column -->
     <div class="space-y-6">
 
-      <!-- Next Step -->
-      <div id="nextStepCard" class="glass rounded-2xl p-4">
+      <!-- Next Step - Owner View -->
+      <div id="nextStepCardOwner" class="glass rounded-2xl p-4">
         <div class="card-title text-sm mb-2">Next step</div>
         <div class="space-y-3">
           <button class="btn-primary w-full rounded-xl py-3" id="btn-accept" type="button">Accept &amp; Send Link</button>
@@ -198,6 +201,15 @@
           <button class="btn w-full rounded-xl py-3" id="btn-nope"    type="button">Not a Fit</button>
         </div>
         <div class="small mt-3">Choose one action to keep this LinkUp fresh.</div>
+      </div>
+
+      <!-- Next Step - Viewer View -->
+      <div id="nextStepCardViewer" class="glass rounded-2xl p-4 hidden">
+        <div class="card-title text-sm mb-2">Status</div>
+        <div id="viewerOwnerStatus" class="chip rounded-xl p-3">
+          <div class="small mb-1">Owner status: <span id="viewerStatusText">Available</span></div>
+          <div class="text-sm opacity-90" id="viewerStatusDesc">Your request is being reviewed. You'll hear back soon!</div>
+        </div>
       </div>
 
     </div>
@@ -292,6 +304,24 @@ document.addEventListener('DOMContentLoaded', function(){
     CURRENT_VIEW = v;
     $('#btn-owner').classList.toggle('sel', v==='owner');
     $('#btn-viewer').classList.toggle('sel', v==='viewer');
+    
+    // Update view-specific component visibility
+    if (v === 'owner') {
+      // Owner view: show owner controls, hide viewer status
+      $('#nextStepCardOwner').classList.remove('hidden');
+      $('#nextStepCardViewer').classList.add('hidden');
+      $('#compatScoreWrap').classList.remove('hidden');
+      $('#availabilityToggle').classList.remove('hidden');
+    } else {
+      // Viewer view: hide owner controls, show viewer status, hide score area only
+      $('#nextStepCardOwner').classList.add('hidden');
+      $('#nextStepCardViewer').classList.remove('hidden');
+      $('#compatScoreWrap').classList.add('hidden');
+      $('#availabilityToggle').classList.add('hidden');
+    }
+    
+    // Update viewer status display
+    updateViewerStatus();
     $('#scenarioHint').querySelector('.hint').textContent = v==='owner' ? 'Owner console view' : 'Viewer experience';
   }
   function setAvail(a){
@@ -299,6 +329,27 @@ document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('#availabilityToggle .pill').forEach(b => b.classList.toggle('sel', b.dataset.state===a));
     $('#availLabel').textContent = a==='away' ? 'Owner away' : 'Owner available';
     $('#ownerBusyBadge').classList.toggle('hidden', a!=='away');
+    updateViewerStatus();
+  }
+  
+  function updateViewerStatus(){
+    const statusText = $('#viewerStatusText');
+    const statusDesc = $('#viewerStatusDesc');
+    const statusCard = $('#viewerOwnerStatus');
+    
+    if (statusText && statusDesc && statusCard) {
+      if (AVAIL === 'away') {
+        statusText.textContent = 'Away';
+        statusDesc.textContent = 'The owner is currently away. Please check back later.';
+        statusCard.style.background = 'rgba(239, 68, 68, 0.1)';
+        statusCard.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+      } else {
+        statusText.textContent = 'Available';
+        statusDesc.textContent = 'Your request is being reviewed. You\'ll hear back soon!';
+        statusCard.style.background = 'rgba(34, 197, 94, 0.1)';
+        statusCard.style.borderColor = 'rgba(34, 197, 94, 0.2)';
+      }
+    }
   }
   function setScore(n){
     SCORE = clamp(parseInt(n||0,10), 0, 100);
@@ -327,15 +378,16 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     const label = code.includes('away') ? 'Owner away' : 'Owner available';
     $('#scenarioHint').innerHTML = `Scenario: <span class="hint">${code.split('-')[0]} preset</span> • <span class="hint">${label}</span>`;
+    updateViewerStatus(); // Sync viewer status when scenario changes
   }
 
   // ---------- Confirm modal ----------
   const confirmModal = $('#confirmModal');
   function openConfirm(type){
     const map = {
-      accept: `<b>Accept &amp; Send Link</b><br/>We’ll generate a scheduling/join link and notify the viewer.`,
-      needs : `<b>Needs Info</b><br/>We’ll ask the viewer to clarify scope or provide materials.`,
-      nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>“Thanks for reaching out. This isn’t a fit right now, but wishing you success.”</em>`
+      accept: `<b>Accept &amp; Send Link</b><br/>We'll generate a scheduling/join link and notify the viewer.`,
+      needs : `<b>Needs Info</b><br/>We'll ask the viewer to clarify scope or provide materials.`,
+      nope  : `<b>Not a Fit</b><br/>Message to Viewer (shown verbatim after confirm):<br/><em>"Thanks for reaching out. This isn't a fit right now, but wishing you success."</em>`
     };
     PENDING_ACTION = type;
     $('#confirmText').innerHTML = map[type] || '';
@@ -389,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // ---------- Initial state ----------
   setView('owner'); setAvail('available'); setStep(1); setScore(78);
+  updateViewerStatus(); // Ensure viewer status is initialized
 
   // ---------- Guided Tour config ----------
   window.TourConfig = {
@@ -400,10 +453,10 @@ document.addEventListener('DOMContentLoaded', function(){
       { sel:'#profilesRow', title:'People', body:'Owner ↔ Viewer cards. Tap to see mini-profiles.', place:'top' },
       { sel:'#viewerRequest', title:'Viewer Request & 1-Liner', body:'The action they chose (e.g., Schedule a Call) and their one-sentence context in quotes.', place:'top' },
       { sel:'#compatibilityCard', title:'Compatibility', body:'AI score + reasons. Confidence reflects data quality.', place:'left' },
-      { sel:'#nextStepCard', title:'Next step', body:'Choose one: Accept & Send Link, Needs Info, or Not a Fit (preview message shown before confirming).', place:'left' },
+      { sel:'#nextStepCardOwner', title:'Next step', body:'Choose one: Accept & Send Link, Needs Info, or Not a Fit (preview message shown before confirming).', place:'left' },
       { sel:'#progressSection', title:'Timeline + expiry', body:'Labels and progress share one grid; the fill snaps to the end of each phase segment.', place:'top' },
       { sel:'#footerActions', title:'Quick actions', body:'Download vCard, add to calendar, or open the public LinkUp page.', place:'top' },
-      { sel:null, finish:true, title:'All set', body:'That’s the Owner view. Try the Viewer tour to see the other side.' }
+      { sel:null, finish:true, title:'All set', body:'That's the Owner view. Try the Viewer tour to see the other side.' }
     ],
     viewer: [
       { sel:'#viewToggle', title:'Pick your view', body:'Switch to Viewer to experience what visitors see.', place:'bottom',
@@ -411,9 +464,9 @@ document.addEventListener('DOMContentLoaded', function(){
       { sel:'#viewerRequest', title:'Your request', body:'Your selected action and your 1-liner appear here.', place:'top' },
       { sel:'#compatibilityCard', title:'Compatibility snapshot', body:'Quick read on mutual fit. High score? Proceed. Low? Maybe pause—especially if owner is Away.', place:'left' },
       { sel:'#progressSection', title:'Status + deadline', body:'See where things stand and when the LinkUp expires.', place:'top' },
-      { sel:'#nextStepCard', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
+      { sel:'#nextStepCardViewer', title:'What happens next', body:'Owner chooses an action. You\'ll get the link or message here.', place:'left' },
       { sel:'#footerActions', title:'Open public page', body:'Check details or share from the public LinkUp page.', place:'top' },
-      { sel:null, finish:true, title:'That’s it', body:'Short, decisive, no thread fatigue. You’re done.' }
+      { sel:null, finish:true, title:'That's it', body:'Short, decisive, no thread fatigue. You're done.' }
     ]
   };
 
