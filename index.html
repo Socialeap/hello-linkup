@@ -132,7 +132,7 @@
 
   <div id="profilesRow" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
     <div class="glass rounded-2xl p-4 flex items-center gap-4">
-      <img class="avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto-format&fit=crop" alt="Owner">
+      <img class="avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop" alt="Owner">
       <div>
         <div class="font-semibold text-lg">Alex Winterton</div>
         <div class="small">Signature Owner</div>
@@ -378,7 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#dot-acted').classList.add('active');
         break;
       case 'decline':
-        updateViewerCard('Not a Fit', 'Thanks for reaching out. This isn’t a fit right now, but wishing you success.', 'danger');
+        // --- THIS LINE HAS BEEN UPDATED ---
+        updateViewerCard('Not a Fit', "Thanks for connecting. Unfortunately, I have to decline at this time due to current priorities.", 'danger');
         updateProgressBar(66);
         $('#dot-acted').classList.add('active');
         break;
