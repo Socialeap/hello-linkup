@@ -16,6 +16,7 @@
     --panel:rgba(29,22,52,.85); --panel-2:rgba(25,19,45,.9);
     --line:rgba(140,106,240,.35);
     --accent:#A78BFA; --accent-2:#8B5CF6; --teal:#22D3EE;
+    --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
   }
   html,body{height:100%}
   body{
@@ -28,7 +29,7 @@
   }
   .glass{background:var(--panel); border:1px solid var(--line);
     box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05);
-    backdrop-filter: blur(8px)}
+    backdrop-filter: blur(8px); transition: border-color .3s ease;}
   .chip{border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.06)}
   .chip.sel{background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#170E2F; border-color:transparent; font-weight:800}
   .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#170E2F; font-weight:800}
@@ -40,6 +41,11 @@
   .avatar{width:52px;height:52px;border-radius:999px;object-fit:cover;border:2px solid rgba(255,255,255,.14)}
   .dot{width:10px;height:10px;border-radius:999px;background:rgba(167,139,250,.55);display:inline-block;margin-right:.5rem}
   .dot.active{background:linear-gradient(180deg,var(--teal),var(--accent))}
+
+  /* Dynamic Border States */
+  .border-success { border-color: var(--success); }
+  .border-warning { border-color: var(--warning); }
+  .border-danger { border-color: var(--danger); }
 
   /* Score */
   .score-wrap{display:flex;align-items:center;gap:.5rem}
@@ -182,16 +188,16 @@
       <div id="nextStepCardOwner" class="glass rounded-2xl p-4">
         <div class="card-title text-sm mb-2">Next step</div>
         <div class="space-y-3">
-          <button class="btn-primary w-full rounded-xl py-3" id="btn-accept" type="button">Accept &amp; Send Link</button>
-          <button class="btn w-full rounded-xl py-3" id="btn-needs"   type="button">Needs Info</button>
-          <button class="btn w-full rounded-xl py-3" id="btn-nope"    type="button">Not a Fit</button>
+          <button class="btn-primary w-full rounded-xl py-3" id="acceptSendLinkBtn" type="button">Accept &amp; Send Link</button>
+          <button class="btn w-full rounded-xl py-3" id="needsInfoBtn"      type="button">Needs Info</button>
+          <button class="btn w-full rounded-xl py-3" id="declineBtn"        type="button">Not a Fit</button>
         </div>
         <div class="small mt-3">Choose one action to keep this LinkUp fresh.</div>
       </div>
       
-      <div id="nextStepCardViewer" class="glass rounded-2xl p-4 hidden">
-        <div class="card-title text-sm mb-2">What happens next</div>
-        <div id="viewerNextStepContent" class="small">Owner chooses an action. You’ll get the link or message here.</div>
+      <div id="viewerCard" class="glass rounded-2xl p-4 hidden">
+        <div class="card-title text-sm mb-2" id="viewerCardTitle">What happens next</div>
+        <p class="small" id="viewerCardText">Owner chooses an action. You’ll get the link or message here.</p>
         <div id="viewerOwnerStatus" class="mt-3 font-bold"></div>
       </div>
 
@@ -206,7 +212,7 @@
       <div class="phase-label"><span class="dot" id="dot-closed"></span>Scheduled/Closed</div>
 
       <div class="phase-track">
-        <div class="phase-fill" id="phaseFill"></div>
+        <div class="phase-fill" id="progressBar"></div>
         <div class="phase-tick t25"></div>
         <div class="phase-tick t50"></div>
         <div class="phase-tick t75"></div>
@@ -289,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#btn-viewer').classList.toggle('sel', state.view === 'viewer');
     $('#availabilityToggle').style.display = state.view === 'owner' ? 'flex' : 'none';
     $('#nextStepCardOwner').style.display = state.view === 'owner' ? 'block' : 'none';
-    $('#nextStepCardViewer').style.display = state.view === 'viewer' ? 'block' : 'none';
+    $('#viewerCard').style.display = state.view === 'viewer' ? 'block' : 'none';
     $('#compatScoreWrap').style.display = state.view === 'owner' ? 'block' : 'none';
 
     // Availability
@@ -300,16 +306,30 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#viewerOwnerStatus').textContent = `Owner status: ${state.availability === 'away' ? 'Away' : 'Available'}`;
     $('#viewerOwnerStatus').style.color = state.availability === 'away' ? '#F87171' : '#34D399';
 
-    // Viewer's next step content based on owner's action
-    let viewerNextStepContent = "Owner chooses an action. You’ll get the link or message here.";
+    // **CORRECTION**: Update Viewer Card based on owner's action
+    const viewerCard = $('#viewerCard');
+    const viewerCardTitle = $('#viewerCardTitle');
+    const viewerCardText = $('#viewerCardText');
+    
+    // Reset styles and content first
+    viewerCard.classList.remove('border-success', 'border-warning', 'border-danger');
+    viewerCardTitle.textContent = "What happens next";
+    let viewerTextContent = "Owner chooses an action. You’ll get the link or message here.";
+
     if (state.ownerAction === 'accept') {
-      viewerNextStepContent = "Great news! The Owner has accepted and will send a scheduling link shortly.";
+      viewerTextContent = "Great news! The Owner has accepted and will send a scheduling link shortly.";
+      viewerCardTitle.textContent = "Accepted!";
+      viewerCard.classList.add('border-success');
     } else if (state.ownerAction === 'needs') {
-      viewerNextStepContent = "The Owner needs a bit more information. They will reach out with specific questions.";
+      viewerTextContent = "The Owner needs a bit more information. They will reach out with specific questions.";
+      viewerCardTitle.textContent = "Information Needed";
+      viewerCard.classList.add('border-warning');
     } else if (state.ownerAction === 'nope') {
-      viewerNextStepContent = "Thanks for reaching out. This isn’t a fit right now, but wishing you success.";
+      viewerTextContent = "Thanks for reaching out. This isn’t a fit right now, but wishing you success.";
+      viewerCardTitle.textContent = "Not a Fit";
+      viewerCard.classList.add('border-danger');
     }
-    $('#viewerNextStepContent').innerHTML = viewerNextStepContent;
+    viewerCardText.innerHTML = viewerTextContent;
 
 
     // Score
@@ -322,9 +342,9 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#dot-viewed').classList.toggle('active', state.step >= 2);
     $('#dot-acted').classList.toggle('active', state.step >= 3);
     $('#dot-closed').classList.toggle('active', state.step >= 4);
-    // The logic here maps step 1->0%, 2->33%, 3->67%, 4->100%
     const pct = state.step > 1 ? Math.round(((state.step - 1) / 3) * 100) : 0;
-    $('#phaseFill').style.width = pct + '%';
+    // **CORRECTION**: Use the new #progressBar ID
+    $('#progressBar').style.width = pct + '%';
     
     // Scenario Hint
     const scenarioPicker = $('#scenarioPicker');
@@ -343,10 +363,10 @@ document.addEventListener('DOMContentLoaded', function(){
   function applyScenario(code){
     let scenarioState = {ownerAction: null}; // Reset action on scenario change
     switch(code){
-      case 'D-away':       Object.assign(scenarioState, {availability: 'away', step: 1, score: 62}); break;
-      case 'C-available':  Object.assign(scenarioState, {availability: 'available', step: 1, score: 78}); break;
-      case 'B-followup':   Object.assign(scenarioState, {availability: 'available', step: 2, score: 55}); break;
-      case 'A-accepted':   Object.assign(scenarioState, {availability: 'available', step: 3, score: 84, ownerAction: 'accept'}); break;
+      case 'D-away':        Object.assign(scenarioState, {availability: 'away', step: 1, score: 62}); break;
+      case 'C-available':   Object.assign(scenarioState, {availability: 'available', step: 1, score: 78}); break;
+      case 'B-followup':    Object.assign(scenarioState, {availability: 'available', step: 2, score: 55}); break;
+      case 'A-accepted':    Object.assign(scenarioState, {availability: 'available', step: 3, score: 84, ownerAction: 'accept'}); break;
     }
     setState(scenarioState);
   }
@@ -408,9 +428,10 @@ document.addEventListener('DOMContentLoaded', function(){
   
   $('#scenarioPicker').addEventListener('change', e=> applyScenario(e.target.value));
   
-  $('#btn-accept').addEventListener('click', ()=> openConfirm('accept'));
-  $('#btn-needs').addEventListener('click',  ()=> openConfirm('needs'));
-  $('#btn-nope').addEventListener('click',   ()=> openConfirm('nope'));
+  // **CORRECTION**: Use new button IDs for event listeners
+  $('#acceptSendLinkBtn').addEventListener('click', ()=> openConfirm('accept'));
+  $('#needsInfoBtn').addEventListener('click',  ()=> openConfirm('needs'));
+  $('#declineBtn').addEventListener('click',   ()=> openConfirm('nope'));
   
   $('#confirmApply').addEventListener('click', applyAction);
   $('#confirmBack').addEventListener('click', closeConfirm);
@@ -445,7 +466,8 @@ document.addEventListener('DOMContentLoaded', function(){
       { sel:'#viewerRequest', title:'Your request', body:'Your selected action and your 1-liner appear here.', place:'top' },
       { sel:'#compatibilityCard', title:'Compatibility snapshot', body:'Quick read on mutual fit. High score? Proceed. Low? Maybe pause—especially if owner is Away.', place:'left' },
       { sel:'#progressSection', title:'Status + deadline', body:'See where things stand and when the LinkUp expires.', place:'top' },
-      { sel:'#nextStepCardViewer', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
+      // **CORRECTION**: Use new #viewerCard ID for the tour
+      { sel:'#viewerCard', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
       { sel:'#footerActions', title:'Open public page', body:'Check details or share from the public LinkUp page.', place:'top' },
       { sel:null, finish:true, title:'That’s it', body:'Short, decisive, no thread fatigue. You’re done.' }
     ]
