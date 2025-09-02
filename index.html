@@ -275,12 +275,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ---------- DOM Element Selectors ----------
   const $ = (selector, root = document) => root.querySelector(selector);
-  const $$ = (selector, root = document) => root.querySelectorAll(selector);
-
+  
   // ---------- DOM Element References ----------
   const ownerBtn = $('#btn-owner');
   const viewerBtn = $('#btn-viewer');
-  const availabilityToggle = $('#availabilityToggle');
   const nextStepCardOwner = $('#nextStepCardOwner');
   const viewerCard = $('#viewerCard');
   const viewerCardTitle = $('#viewerCardTitle');
@@ -293,16 +291,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- State Management ----------
   let state = {
     view: 'owner', // 'owner' or 'viewer'
-    ownerAction: null // 'accept', 'needs', or 'decline'
+    ownerAction: null // null, 'accept', 'needs', or 'decline'
   };
 
   // ---------- UI Update Functions ----------
 
   /**
    * Updates the viewer's "What's Next" card content and border color.
-   * @param {string} title - The new title for the card.
-   * @param {string} text - The new paragraph text for the card.
-   * @param {string} [mode] - Optional state ('success', 'warning', 'danger') for styling.
    */
   function updateViewerCard(title, text, mode) {
     viewerCard.classList.remove('border-success', 'border-warning', 'border-danger');
@@ -315,10 +310,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * Updates the progress bar's width.
-   * @param {number} percentage - The new width percentage (0-100).
    */
   function updateProgressBar(percentage) {
     progressBar.style.width = `${percentage}%`;
+  }
+  
+  /**
+   * Updates the visual state of the Owner's action buttons.
+   */
+  function updateActionButtons() {
+    // Reset all buttons to the default state first
+    acceptBtn.classList.remove('btn-primary');
+    acceptBtn.classList.add('btn');
+    needsInfoBtn.classList.remove('btn-primary');
+    needsInfoBtn.classList.add('btn');
+    declineBtn.classList.remove('btn-primary');
+    declineBtn.classList.add('btn');
+
+    // Apply the 'btn-primary' class to the selected button
+    let selectedBtn;
+    switch (state.ownerAction) {
+      case 'accept':
+        selectedBtn = acceptBtn;
+        break;
+      case 'needs':
+        selectedBtn = needsInfoBtn;
+        break;
+      case 'decline':
+        selectedBtn = declineBtn;
+        break;
+      default:
+        // If no action is set, default to the 'Accept' button as primary
+        selectedBtn = acceptBtn;
+        break;
+    }
+    selectedBtn.classList.remove('btn');
+    selectedBtn.classList.add('btn-primary');
   }
 
   /**
@@ -332,7 +359,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ownerBtn.classList.toggle('sel', isOwnerView);
     viewerBtn.classList.toggle('sel', !isOwnerView);
 
-    // 2. Update Viewer Card and Progress Bar based on Owner's action
+    // 2. Update the highlighting of the owner action buttons
+    updateActionButtons();
+
+    // 3. Update Viewer Card and Progress Bar based on Owner's action
     switch (state.ownerAction) {
       case 'accept':
         updateViewerCard('Accepted!', 'Great news! The Owner has accepted and will send a scheduling link shortly.', 'success');
@@ -392,7 +422,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- Initial Render ----------
-  // Set initial state for demonstration purposes
   $('#dot-viewed').classList.add('active');
   render();
 });
