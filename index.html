@@ -50,7 +50,7 @@
   .phase-wrap{display:grid;grid-template-columns:repeat(4,1fr);column-gap:12px;row-gap:10px;align-items:center}
   .phase-label{display:flex;align-items:center;gap:.4rem;min-height:26px}
   .phase-track{grid-column:1/-1;position:relative;height:8px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);overflow:hidden}
-  .phase-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--accent));width:0%}
+  .phase-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--accent));width:0%; transition: width .3s ease-out;}
   .phase-tick{position:absolute;top:-6px;width:1px;height:20px;background:rgba(255,255,255,.12)}
   .phase-tick.t25{left:25%} .phase-tick.t50{left:50%} .phase-tick.t75{left:75%}
 
@@ -322,8 +322,9 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#dot-viewed').classList.toggle('active', state.step >= 2);
     $('#dot-acted').classList.toggle('active', state.step >= 3);
     $('#dot-closed').classList.toggle('active', state.step >= 4);
-    const pct = Math.round(((state.step - 1) / 3) * 100);
-    $('#phaseFill').style.width = pct > 100 ? 100 + '%' : pct + '%';
+    // The logic here maps step 1->0%, 2->33%, 3->67%, 4->100%
+    const pct = state.step > 1 ? Math.round(((state.step - 1) / 3) * 100) : 0;
+    $('#phaseFill').style.width = pct + '%';
     
     // Scenario Hint
     const scenarioPicker = $('#scenarioPicker');
@@ -340,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // ---------- Scenario presets (demo only) ----------
   function applyScenario(code){
-    let scenarioState = {ownerAction: null};
+    let scenarioState = {ownerAction: null}; // Reset action on scenario change
     switch(code){
       case 'D-away':       Object.assign(scenarioState, {availability: 'away', step: 1, score: 62}); break;
       case 'C-available':  Object.assign(scenarioState, {availability: 'available', step: 1, score: 78}); break;
@@ -367,11 +368,19 @@ document.addEventListener('DOMContentLoaded', function(){
     confirmModal.classList.add('hidden');
     confirmModal.classList.remove('flex');
   }
-  function applyAction(){
-    closeConfirm();
-    let nextStep = state.step < 3 ? 3 : 4;
-    setState({ownerAction: PENDING_ACTION, step: nextStep});
-    PENDING_ACTION = null;
+
+  function applyAction() {
+      closeConfirm();
+      const nextStep = state.step < 3 ? 3 : 4;
+
+      const newState = {
+          ...state,
+          ownerAction: PENDING_ACTION,
+          step: nextStep
+      };
+      
+      setState(newState);
+      PENDING_ACTION = null;
   }
 
   // ---------- Expiry countdown (static seed) ----------
