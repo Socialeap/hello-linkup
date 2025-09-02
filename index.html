@@ -50,7 +50,7 @@
   /* Score */
   .score-wrap{display:flex;align-items:center;gap:.5rem}
   .score-track{width:130px;height:8px;border-radius:999px;background:rgba(255,255,255,.08);position:relative;overflow:hidden}
-  .score-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#EF4444,#F59E0B,#22C55E);width:0%}
+  .score-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#EF4444,#F59E0B,#22C55E);width:0%; transition: width .3s ease-out;}
 
   /* Phases + single continuous bar (grid-aligned) */
   .phase-wrap{display:grid;grid-template-columns:repeat(4,1fr);column-gap:12px;row-gap:10px;align-items:center}
@@ -132,7 +132,7 @@
 
   <div id="profilesRow" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
     <div class="glass rounded-2xl p-4 flex items-center gap-4">
-      <img class="avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop" alt="Owner">
+      <img class="avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto-format&fit=crop" alt="Owner">
       <div>
         <div class="font-semibold text-lg">Alex Winterton</div>
         <div class="small">Signature Owner</div>
@@ -287,6 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const acceptBtn = $('#acceptSendLinkBtn');
   const needsInfoBtn = $('#needsInfoBtn');
   const declineBtn = $('#declineBtn');
+  const scoreFill = $('#scoreFill');
+  const scoreNum = $('#scoreNum');
 
   // ---------- State Management ----------
   let state = {
@@ -386,7 +388,11 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProgressBar(33); // Default to "Submitted"
         break;
     }
-     // Always ensure the "viewed" dot is active if any action has been taken or is pending.
+    
+    // 4. Update Compatibility Score Bar
+    scoreFill.style.width = scoreNum.textContent + '%';
+
+    // Always ensure the "viewed" dot is active if any action has been taken or is pending.
     if(state.ownerAction) {
         $('#dot-viewed').classList.add('active');
     }
