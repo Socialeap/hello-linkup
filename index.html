@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#viewerOwnerStatus').textContent = `Owner status: ${state.availability === 'away' ? 'Away' : 'Available'}`;
     $('#viewerOwnerStatus').style.color = state.availability === 'away' ? '#F87171' : '#34D399';
 
-    // **CORRECTION**: Update Viewer Card based on owner's action
+    // Update Viewer Card based on owner's action
     const viewerCard = $('#viewerCard');
     const viewerCardTitle = $('#viewerCardTitle');
     const viewerCardText = $('#viewerCardText');
@@ -343,7 +343,6 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#dot-acted').classList.toggle('active', state.step >= 3);
     $('#dot-closed').classList.toggle('active', state.step >= 4);
     const pct = state.step > 1 ? Math.round(((state.step - 1) / 3) * 100) : 0;
-    // **CORRECTION**: Use the new #progressBar ID
     $('#progressBar').style.width = pct + '%';
     
     // Scenario Hint
@@ -389,17 +388,18 @@ document.addEventListener('DOMContentLoaded', function(){
     confirmModal.classList.remove('flex');
   }
 
+  // --- FUNCTION CORRECTED ---
   function applyAction() {
       closeConfirm();
       const nextStep = state.step < 3 ? 3 : 4;
 
-      const newState = {
-          ...state,
+      // This is the fix. We now pass only the *changes* to the state,
+      // which is a more direct and robust way to manage the update.
+      setState({
           ownerAction: PENDING_ACTION,
           step: nextStep
-      };
+      });
       
-      setState(newState);
       PENDING_ACTION = null;
   }
 
@@ -428,7 +428,6 @@ document.addEventListener('DOMContentLoaded', function(){
   
   $('#scenarioPicker').addEventListener('change', e=> applyScenario(e.target.value));
   
-  // **CORRECTION**: Use new button IDs for event listeners
   $('#acceptSendLinkBtn').addEventListener('click', ()=> openConfirm('accept'));
   $('#needsInfoBtn').addEventListener('click',  ()=> openConfirm('needs'));
   $('#declineBtn').addEventListener('click',   ()=> openConfirm('nope'));
@@ -466,7 +465,6 @@ document.addEventListener('DOMContentLoaded', function(){
       { sel:'#viewerRequest', title:'Your request', body:'Your selected action and your 1-liner appear here.', place:'top' },
       { sel:'#compatibilityCard', title:'Compatibility snapshot', body:'Quick read on mutual fit. High score? Proceed. Low? Maybe pause—especially if owner is Away.', place:'left' },
       { sel:'#progressSection', title:'Status + deadline', body:'See where things stand and when the LinkUp expires.', place:'top' },
-      // **CORRECTION**: Use new #viewerCard ID for the tour
       { sel:'#viewerCard', title:'What happens next', body:'Owner chooses an action. You’ll get the link or message here.', place:'left' },
       { sel:'#footerActions', title:'Open public page', body:'Check details or share from the public LinkUp page.', place:'top' },
       { sel:null, finish:true, title:'That’s it', body:'Short, decisive, no thread fatigue. You’re done.' }
