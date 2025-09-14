@@ -91,11 +91,6 @@
 </head>
 <body>
 
-<div class="tour-launch">
-  <button id="tour-owner-btn">Owner tour</button>
-  <button id="tour-viewer-btn">Viewer tour</button>
-</div>
-
 <div class="max-w-6xl mx-auto px-5 pt-8 pb-16">
 
   <div class="glass rounded-2xl p-4 md:p-5 mb-6 relative overflow-hidden">
@@ -103,16 +98,6 @@
 
     <div class="flex flex-wrap items-center gap-3">
       <div class="text-2xl font-extrabold tracking-tight">Hello! <span class="text-violet-300">LinkUp</span> <span class="text-sm font-semibold text-violet-200/80 align-top">v7</span></div>
-
-      <div id="scenarioSelect" class="chip rounded-xl px-3 py-1.5 ml-2 flex items-center gap-2">
-        <span class="text-sm">Scenario:</span>
-        <select id="scenarioPicker" class="bg-transparent outline-none text-[.9rem]">
-          <option value="C-available"> C • Fresh new (Owner available)</option>
-          <option value="D-away"> D • Fresh new (Owner away)</option>
-          <option value="B-followup"> B • Follow-up needed</option>
-          <option value="A-accepted"> A • Accepted → Scheduling</option>
-        </select>
-      </div>
 
       <div id="availabilityToggle" class="ml-auto flex items-center gap-2">
         <span class="small">Owner availability:</span>
@@ -127,7 +112,6 @@
       </div>
     </div>
 
-    <div id="scenarioHint" class="mt-3 small">Scenario: <span class="hint">Fresh new</span> • <span id="availLabel" class="hint">Owner available</span></div>
   </div>
 
   <div id="profilesRow" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
@@ -222,9 +206,6 @@
   </div>
 
   <div id="footerActions" class="flex flex-wrap gap-3 mt-6">
-    <button class="btn rounded-xl px-4 py-2" type="button">Download vCard</button>
-    <button class="btn rounded-xl px-4 py-2" type="button">Add to Calendar</button>
-    <a class="btn rounded-xl px-4 py-2" href="#" onclick="alert('Opening public LinkUp page…');return false;">Open public LinkUp page</a>
     <div class="small opacity-70 ml-auto">ID: —</div>
   </div>
 
@@ -239,33 +220,6 @@
     <div class="flex gap-3 justify-end">
       <button class="btn rounded-xl px-4 py-2" id="confirmBack" type="button">Back</button>
       <button class="btn-primary rounded-xl px-4 py-2" id="confirmApply" type="button">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<div id="tour-overlay" class="tour-overlay" aria-hidden="true">
-  <div class="tour-dim" id="tour-dim"></div>
-  <svg class="tour-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-    <defs>
-      <linearGradient id="tourGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#22d3ee" stop-opacity=".85"/>
-        <stop offset="100%" stop-color="#a78bfa" stop-opacity=".95"/>
-      </linearGradient>
-      <marker id="tourHead" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto">
-        <polygon class="tour-arrow-head" points="0 0, 7 3.5, 0 7"></polygon>
-      </marker>
-    </defs>
-    <line id="tour-line" class="tour-arrow" x1="0" y1="0" x2="0" y2="0" marker-end="url(#tourHead)"></line>
-  </svg>
-  <div id="tour-spot" class="tour-spot"></div>
-  <div id="tour-bubble" class="tour-bubble" role="dialog" aria-live="polite">
-    <h4 id="tour-title" class="tour-title"></h4>
-    <div id="tour-body" class="tour-body"></div>
-    <div class="tour-step" id="tour-step-indicator"></div>
-    <div class="tour-ctr">
-      <button id="tour-prev" class="tour-btn" type="button">Back</button>
-      <button id="tour-skip" class="tour-btn" type="button">Skip</button>
-      <button id="tour-next" class="tour-btn primary" type="button">Next</button>
     </div>
   </div>
 </div>
